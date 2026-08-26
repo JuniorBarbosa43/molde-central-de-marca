@@ -1,0 +1,159 @@
+================================================================================
+PROMPT INICIAL — montar a central de marca a partir do molde
+Cole isto como primeira mensagem no projeto do Claude que vai tocar o conteudo.
+Antes de colar: copie a pasta molde/, o ENTREVISTA.md, o conta-colchetes.js e a
+pasta _entrada/ para dentro do projeto.
+================================================================================
+
+INSTANCIA
+  Marca-alvo ......... Termas Pacu
+  Situacao ........... marca CONSOLIDADA. Identidade, manual, publico, paleta e
+                       tom de voz ja existem e estao fechados.
+  O que isso muda .... isto nao e descoberta de marca. E extracao e
+                       transcricao de uma marca que ja existe para dentro de
+                       uma estrutura que ja existe.
+
+  (Para usar com outra marca, troque as tres linhas acima. O resto e generico.)
+
+--------------------------------------------------------------------------------
+O QUE VOCE VAI FAZER
+
+Voce conduz a entrevista que transforma molde/central.html na central de marca
+da Termas Pacu, e escreve o resultado no arquivo.
+
+O protocolo completo esta em ENTREVISTA.md. Leia ele inteiro antes de agir.
+Este prompt so estabelece o comeco.
+
+--------------------------------------------------------------------------------
+LEIA NESTA ORDEM, ANTES DE PERGUNTAR QUALQUER COISA
+
+  1. ENTREVISTA.md ............ o protocolo: 6 blocos, portao, estado
+  2. _entrada/ inteira ........ manual, fontes, logo, imagens, vetores,
+                                texturas, referencias, publicado
+  3. molde/central.html ....... a estrutura que vai ser preenchida
+  4. node conta-colchetes.js .. o placar inicial (deve dar 166)
+  5. CONTRATO-DO-MOTOR.md ..... so quando chegar a hora do motor. Nao e
+                                para a entrevista, e para quem construir
+                                as pecas depois.
+
+--------------------------------------------------------------------------------
+A REGRA DE OURO
+
+NUNCA preencha por analogia.
+
+Nem com a marca de onde este molde veio, nem com o que "marcas desse setor
+costumam fazer", nem com o que ficaria bonito ali.
+
+Slot sem resposta continua colchete. Colchete aberto e um estado honesto;
+slot preenchido por analogia e uma mentira que nao acusa em conferencia
+nenhuma.
+
+Isso vale em dobro para o Manual secao 6 (Vocabulario visual), que veio
+deliberadamente vazio, sem exemplo e sem padrao.
+
+Tres respostas que voce aceita sem insistir:
+  "Nao existe."             -> registre. Fecha o colchete.
+  "Esta no manual."         -> va ler. Nao repergunte o que ja foi entregue.
+  "Ainda nao sei."          -> deixe aberto e siga. Volte no portao.
+
+--------------------------------------------------------------------------------
+SUA PRIMEIRA MENSAGEM
+
+Nao e uma lista de perguntas em branco. E um relatorio do que voce ja achou.
+
+Estrutura obrigatoria:
+
+  1. O QUE EU LI
+     O que existe em _entrada/, arquivo por arquivo, com o que voce conseguiu
+     extrair de cada um.
+
+  2. O QUE EU JA EXTRAI, PARA VOCE CONFIRMAR OU CORRIGIR
+     Paleta, tipografia, posicionamento, publico — tudo que o manual ja
+     responde. Em forma de lista, cada item com a fonte de onde saiu.
+     O autor corrige, que e barato. Redigitar e caro.
+
+  3. O QUE FALTA CHEGAR (bloco 0)
+     O que nao esta em _entrada/ e tem PRAZO DE ENTREGA. Peca agora, nao
+     quando for usar:
+       - arquivos de fonte (.ttf/.otf) E O TEXTO DA LICENCA
+         (sao TRES papeis, nao dois: texto corrido, titulo, ficha tecnica)
+       - logotipo em SVG, nao PNG
+       - banco de imagem: >=1500px no lado maior, FUNDO SEPARAVEL
+         (elas viram silhueta por vetorizador; foto bonita com fundo
+          confuso nao fecha contorno)
+       - vetores e icones ja existentes, em SVG
+       - texturas e fundos
+       - 3 a 5 referencias visuais
+       - o que a marca ja publicou
+
+  4. AS PERGUNTAS DO BLOCO 0 QUE NAO SAO ARQUIVO
+     No maximo 6. Sempre com o formato da resposta esperado.
+     Termine dizendo que "nao existe" e "esta no manual" sao respostas validas.
+
+     As cinco que importam:
+
+     a) Qual o canal e o formato REAL? Carrossel 1080x1350? Reels 1080x1920?
+        Story? Outra proporcao? Isso vira constante do motor.
+
+     b) Quem APROVA o que vai ao ar, e o que essa pessoa nunca deixa passar?
+
+     c) Existe restricao legal ou contratual de conteudo? Setor regulado,
+        direito de imagem, uso de foto de pessoa. Se houver crianca nas
+        imagens, isso e restricao dura do banco de imagem.
+
+     d) O negocio e SAZONAL? Se sim, qual calendario ja manda nele —
+        temporada, feriado, ferias escolares, safra, ciclo de matricula?
+        Isso decide a arquitetura do calendario: ritmo fixo (cadencia) ou
+        janelas nomeadas (ancoras). Melhor saber agora que no bloco 6.
+
+     e) Em qual instrumento o resultado JA e medido hoje? Painel, planilha,
+        CRM, sistema de venda. Negocio consolidado quase sempre ja mede
+        trafego e origem de lead em algum lugar — inventar metrica nova
+        cria um numero que so existe na central e que ninguem confere.
+
+--------------------------------------------------------------------------------
+O PORTAO ENTRE BLOCOS
+
+Ao fim de cada bloco, ANTES de perguntar o proximo:
+
+  node conta-colchetes.js --lista
+
+Reporte tres coisas, nesta ordem:
+  1. o placar    ->  "166 -> 118". Numero, nao adjetivo.
+  2. o que ficou aberto neste bloco, e por que
+     ("sem resposta" e "o autor disse que nao existe" sao desfechos
+      diferentes; o segundo FECHA o colchete)
+  3. o que o proximo bloco vai precisar e ainda nao esta em _entrada/
+
+Grave _estado-entrevista.json depois de cada bloco. A entrevista nao cabe numa
+sessao, e sem estado a proxima recomeca do zero.
+
+--------------------------------------------------------------------------------
+O QUE NAO FAZER
+
+  - Nao escreva peca antes do bloco 3. Sem regua, nao ha como reprovar.
+  - Nao escreva gerador antes do bloco 2. O gerador e o vocabulario virando
+    codigo; escreve-lo antes e escolher o vocabulario sem perguntar.
+  - Nao invente numero. Numero inventado sobrevive a todas as revisoes
+    porque parece dado.
+  - Nao feche colchete com sinonimo. Trocar [NOME DA MARCA] por "a marca"
+    tira do placar sem entregar nada.
+  - Nao junte blocos "para adiantar". A ordem e de DEPENDENCIA: paleta antes
+    de arte, vocabulario antes de motor, regua antes de peca.
+  - Nao repergunte o que esta em _entrada/. Va ler.
+
+--------------------------------------------------------------------------------
+TRAVA TECNICA DO BLOCO 1
+
+Se a licenca de tipografia NAO permitir embutir a fonte, PARE e avise.
+
+A arte exportada embute a fonte em base64 dentro do SVG, porque o export de
+PNG desenha a partir de um blob, e blob nao enxerga o @font-face da pagina.
+Sem direito de embutir, o arquivo publicado sai na fonte de fallback — e isso
+so aparece DEPOIS de publicado.
+
+Isso muda o caminho de export inteiro. E mais barato saber no bloco 1.
+
+================================================================================
+Comece agora pelo passo 1 da secao "LEIA NESTA ORDEM". Sem preambulo.
+================================================================================

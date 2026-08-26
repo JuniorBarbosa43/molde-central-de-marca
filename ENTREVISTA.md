@@ -112,11 +112,31 @@ Perguntas, nesta ordem:
    a do "o que é" — ela é a que se consulta quando a peça está quase pronta).
 3. A paleta, cada cor como `#HEX · nome interno · papel`. Papéis:
    fundo claro / texto / destaque (**uma só**) / alerta / superfície / neutra.
-4. A tipografia: qual fonte para título, qual para apoio, **e a licença de
-   embutir de cada uma**.
+4. A tipografia, agora em **três** papéis, e não dois:
+   `--corpo` (texto corrido), `--display` (título), `--mono` (ficha técnica).
+   Para cada uma: qual fonte **e a licença de embutir**.
 5. O logotipo funciona sobre fundo escuro e sobre a cor de destaque? Se não,
    qual é a versão alternativa?
 6. Qual o tamanho mínimo em que o símbolo ainda é reconhecível?
+
+### O gesto tipográfico — pergunte, não herde
+
+O casco tem dois tokens que controlam 54 lugares onde ele grita em caixa alta e
+41 onde ele abre entreletra. Eles vieram da marca de origem, e **caixa alta com
+entreletra aberta é idioma, não neutralidade**.
+
+Mostre a central com os dois ligados e desligados, e deixe o autor escolher:
+
+| Token | Ligado (herdado) | Desligado |
+|---|---|---|
+| `--caixa-rotulo` / `--entreletra-rotulo` | etiquetas em `CAIXA ALTA` espaçada | etiquetas em caixa normal |
+| `--caixa-manchete` / `--entrelinha-manchete` | manchete comprimida, entrelinha 0,86 | manchete que respira, 1,05 |
+
+Entrelinha 0,86 em caixa alta é compressão brutalista. Numa marca orgânica ela
+lê como erro de diagramação — e o autor vai sentir isso sem saber nomear.
+
+**Não herde `--corpo` por omissão.** O casco de origem tinha o documento
+inteiro em monoespaçada; a maioria das marcas quer humanista no texto corrido.
 
 **Depois de responder, você escreve:** o bloco `:root` do `central.html` (as
 seis cores e as duas famílias tipográficas) e as seções 1 a 5 do Manual.
@@ -216,14 +236,32 @@ peça que vai ser refeita** — e refazer peça custa mais que a entrevista inte
 
 1. Quantas peças no primeiro lote?
 2. Quais eixos temáticos do mapa (Manual §9) cada uma cobre?
-3. Frequência: quais dias da semana, quantas semanas?
-4. Data de estreia.
+3. **O negócio é sazonal?** Se sim, qual calendário manda — temporada, feriado,
+   férias escolares, safra, ciclo de matrícula?
+4. Em modo cadência: quais dias da semana, quantas semanas.
+   Em modo âncoras: as janelas, com nome, período e o que cada uma precisa vender.
 5. O que fica fixado no topo do perfil?
-6. Como se sabe que está funcionando — qual número, em quanto tempo?
+6. Em qual instrumento o resultado **já é medido hoje**?
 
 **O que você escreve:** a constante `PECAS` na página Produção, um
-`<article class="peca">` por peça, e `OFFSETS` / `SEMANAS` no script do
-Calendário. O rastreador liga sozinho quando os três existirem.
+`<article class="peca">` por peça, e no script do Calendário o `MODO` mais
+`OFFSETS`/`SEMANAS` (cadência) ou `JANELAS` (âncoras). O rastreador liga sozinho
+quando os dois existirem.
+
+**A pergunta 3 é a que decide a arquitetura do calendário.** Negócio sazonal não
+tem ritmo próprio de conteúdo — tem janelas, e a mesma peça vale cinco vezes
+mais na semana certa. Um calendário de conteúdo que ignora o calendário
+comercial produz esforço constante com retorno irregular, e ninguém consegue
+explicar por quê.
+
+**Se já existe calendário comercial em algum sistema, DERIVE dele.** Redigitar
+temporada à mão é como o balcão acaba cobrando uma tabela e o site cobrando
+outra no mesmo feriado.
+
+**A pergunta 6 vem antes da 5 em importância.** Negócio consolidado quase sempre
+já mede tráfego e origem de lead em algum painel. Inventar métrica nova cria um
+número que só existe na central, que ninguém confere, e que não conversa com o
+que a diretoria já olha.
 
 ---
 
@@ -304,6 +342,10 @@ O molde entrega a central. O que vem depois, em ordem:
    quebra de linha na fonte real, blocos de destaque, export SVG/PNG com a
    fonte embutida, medidor de cobertura de tinta, moldura de área segura.
    Genérica, mas só se escreve com a paleta e os formatos já fechados.
+   **Antes de escrever uma linha dele, leia `CONTRATO-DO-MOTOR.md`** — são os
+   cinco defeitos que já foram pagos uma vez, todos invisíveis na tela e todos
+   com entrega publicada no prejuízo. Quem constrói o motor escolhe linguagem e
+   arquitetura livremente; o contrato não é negociável.
 2. **`pecas/_vocabulario.js`** — os gestos do bloco 2 virando funções.
 3. **Os conferidores** — contraste, colchetes, régua, calendário vencido,
    documento que contradiz o disco.

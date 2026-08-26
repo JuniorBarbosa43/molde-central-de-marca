@@ -77,8 +77,18 @@
   --espinha-borda-clara:rgba(255,255,255,.6);
 
   /* ---- tipografia --------------------------------------------------------
-     --display  [FONTE DE TÍTULO]  a que carrega a personalidade
-     --mono     [FONTE DE APOIO]   a que carrega ficha técnica e legenda
+     TRÊS famílias, e a distinção entre elas foi um defeito corrigido. O casco
+     de origem tinha duas, e o `body` herdava a MONOESPAÇADA: o documento
+     inteiro — parágrafo, lista, legenda — saía em máquina de escrever. Isso
+     não era neutro, era a tese daquela marca (fanzine técnico, xerox) escrita
+     na chrome. Trocar a paleta não removia; o texto continuava gritando o
+     idioma antigo em outra cor.
+
+     --corpo    [FONTE DE TEXTO CORRIDO]  o que se lê em parágrafo. A maioria
+                                          das marcas quer humanista aqui.
+     --display  [FONTE DE TÍTULO]         a que carrega a personalidade
+     --mono     [FONTE DE FICHA TÉCNICA]  número, campo, código, dado tabular.
+                                          Só onde a métrica fixa serve.
 
      ANTES DE ESCOLHER, LEIA: a arte exportada embute a fonte em base64
      DENTRO do SVG, porque o export de PNG desenha a partir de um blob e blob
@@ -86,11 +96,34 @@
      fonte de fallback e ninguém percebe até o post estar publicado.
      Confira a licença ANTES de fechar a tipografia. É o bloco 1 da entrevista.
 
-     A cadeia de fallback abaixo não é enfeite: ela é o que aparece enquanto a
-     fonte real não existe, e enquanto ela não existir a central mente menos
-     se estiver visivelmente sem fonte de marca. */
-  --display:[FONTE DE TÍTULO],Impact,Haettenschweiler,"Arial Narrow Bold","Arial Black",sans-serif;
-  --mono:[FONTE DE APOIO],ui-monospace,Consolas,"DejaVu Sans Mono",monospace;
+     A cadeia de fallback não é enfeite: é o que aparece enquanto a fonte real
+     não existe — e enquanto não existir, a central mente menos se estiver
+     visivelmente sem fonte de marca. */
+  --corpo:"[FONTE DE TEXTO CORRIDO]",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --display:"[FONTE DE TÍTULO]",Impact,Haettenschweiler,"Arial Narrow Bold","Arial Black",sans-serif;
+  --mono:"[FONTE DE FICHA TÉCNICA]",ui-monospace,Consolas,"DejaVu Sans Mono",monospace;
+
+  /* ---- gesto tipográfico -------------------------------------------------
+     Os dois idiomas que estavam espalhados em 115 regras e agora saem daqui.
+     Sem isto, uma marca que não grita herdava caixa alta em 54 lugares e
+     entreletra em 61 — e não havia um lugar onde desligar.
+
+     RÓTULO (44 regras): a etiqueta de interface — "NESTA PÁGINA", "SEMANA 2",
+     legenda de cartão. Convenção funcional, mas nem toda marca a quer.
+       para desligar o grito:  --caixa-rotulo:none  --entreletra-rotulo:normal
+
+     MANCHETE (10 regras): o título em caixa alta comprimida. Isto é IDIOMA DE
+     MARCA, não convenção — entrelinha 0,82 é compressão brutalista, e numa
+     marca orgânica ela lê como erro.
+       para uma manchete que respira:  --caixa-manchete:none
+                                       --entrelinha-manchete:1.05           */
+  --caixa-rotulo:uppercase;
+  --entreletra-rotulo:.12em;
+  --entreletra-rotulo-larga:.18em;
+
+  --caixa-manchete:uppercase;
+  --entrelinha-manchete:.86;
+  --peso-manchete:400;
 
   --nav-larg:250px;
   --medida:66ch;
@@ -138,7 +171,7 @@ body{
   margin:0;
   background:var(--ground);
   color:var(--texto);
-  font-family:var(--mono);
+  font-family:var(--corpo);
   font-size:15px;
   line-height:1.65;
   -webkit-font-smoothing:antialiased;
@@ -176,8 +209,8 @@ body{
 .fechar-gaveta:hover{border-color:var(--espinha-borda-clara)}
 .espinha-marca b{font-family:var(--display);font-size:1.65rem;line-height:.9;
                  letter-spacing:.01em;font-weight:400}
-.espinha-marca span{display:block;font-size:9px;letter-spacing:.14em;
-                    text-transform:uppercase;color:var(--espinha-miudo);margin-top:.15rem}
+.espinha-marca span{display:block;font-size:9px;letter-spacing:var(--entreletra-rotulo);
+                    text-transform:var(--caixa-rotulo);color:var(--espinha-miudo);margin-top:.15rem}
 
 .menu{display:flex;flex-direction:column;gap:1px;list-style:none;margin:0;padding:0}
 .menu a{
@@ -193,7 +226,7 @@ body{
 .menu a[aria-current="page"] .n{color:var(--marcador)}
 
 .subnav{display:flex;flex-direction:column;gap:0;list-style:none;margin:0;padding:0 1.1rem}
-.subnav-tit{font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+.subnav-tit{font-size:9px;letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo);
             color:var(--espinha-miudo);padding:0 1.1rem;margin-bottom:.4rem}
 .subnav a{
   display:block;padding:.24rem 0 .24rem .7rem;text-decoration:none;
@@ -212,7 +245,7 @@ body{
 }
 .busca-campo::placeholder{color:var(--espinha-miudo)}
 .busca-campo:focus{border-color:var(--marcador);outline:none}
-.busca-info{font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+.busca-info{font-size:9px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
             color:var(--espinha-miudo);margin:.4rem 0 0}
 
 .resultados{list-style:none;margin:0;padding:0 1.1rem;display:flex;flex-direction:column;gap:1px}
@@ -222,7 +255,7 @@ body{
 }
 .resultados li a:hover,.resultados li a:focus-visible{
   background:var(--marcador-suave);border-left-color:var(--marcador)}
-.resultados .onde{font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+.resultados .onde{font-size:9px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
                   color:var(--espinha-miudo);display:block}
 .resultados .oque{font-size:12px;font-weight:700;line-height:1.3;display:block;margin:.1rem 0}
 .resultados .trecho{font-size:10.5px;line-height:1.4;color:var(--espinha-miudo);display:block}
@@ -231,7 +264,7 @@ body{
 
 .espinha-pe{margin-top:auto;padding:0 1.1rem;display:flex;flex-direction:column;gap:.6rem}
 .tema-btn{
-  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  font-family:var(--mono);font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
   background:transparent;color:var(--espinha-miudo);border:1px solid var(--espinha-borda-sutil);
   padding:.4rem .6rem;cursor:pointer;text-align:left;
 }
@@ -248,7 +281,7 @@ body{
   }
   .barra svg{width:24px;height:24px;color:var(--marcador)}
   .barra b{font-family:var(--display);font-size:1.25rem;font-weight:400;line-height:1}
-  .barra .atual{font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  .barra .atual{font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
                 color:var(--espinha-miudo);margin-left:auto;text-align:right}
   .gaveta-btn{
     background:transparent;border:1px solid var(--espinha-borda-media);color:inherit;
@@ -301,12 +334,12 @@ body{
 .cab .n{font-family:var(--display);font-size:1.75rem;line-height:1;color:var(--tinta);
         background:var(--marcador);padding:.12em .3em .06em;flex:none;
         align-self:center}
-.cab .tit{font-family:var(--display);font-size:clamp(1.3rem,4.2vw,1.9rem);line-height:.95;
-          text-transform:uppercase;font-weight:400}
+.cab .tit{font-family:var(--display);font-size:clamp(1.3rem,4.2vw,1.9rem);line-height:var(--entrelinha-manchete);
+          text-transform:var(--caixa-manchete);font-weight:var(--peso-manchete)}
 .cab.simples .tit{font-family:var(--mono);font-size:13px;font-weight:700;
-                  letter-spacing:.22em;text-transform:uppercase}
+                  letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo)}
 
-h3{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+h3{font-size:12px;font-weight:700;letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo);
    margin:0;color:var(--miudo)}
 
 .bloco{display:flex;flex-direction:column;gap:.6rem}
@@ -316,7 +349,7 @@ p{margin:0;max-width:var(--medida)}
 /* ---- texto ---- */
 .mark{background:var(--marcador);color:var(--tinta);padding:0 .2em;font-weight:700;
       box-decoration-break:clone;-webkit-box-decoration-break:clone}
-.micro{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--miudo);
+.micro{font-size:11px;letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo);color:var(--miudo);
        line-height:1.5;margin:0}
 /* último resquício de -webkit-text-stroke removido. o asterisco das manchetes
    vira marca-texto igual aos números; na espinha escura o amarelo puro já lê. */
@@ -335,7 +368,7 @@ p{margin:0;max-width:var(--medida)}
        background:var(--linha);border:1px solid var(--linha)}
 .ficha > div{background:var(--ground);padding:.6rem .7rem;display:flex;
              flex-direction:column;gap:.15rem}
-.ficha dt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--miudo)}
+.ficha dt{font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo)}
 .ficha dd{margin:0;font-size:12.5px;line-height:1.35;font-weight:700}
 
 /* A COLEÇÃO. As capas são SVG do próprio motor, sem o bloco de fontes: dentro
@@ -359,14 +392,14 @@ p{margin:0;max-width:var(--medida)}
 .capa-item > svg{aspect-ratio:4/5;object-fit:contain;background:var(--caixa)}
 .capa-item.reels > svg{background:var(--tinta-fundo)}
 .capa-pe{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;
-         padding:.5rem .6rem;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+         padding:.5rem .6rem;font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
          color:var(--miudo)}
 .capa-item:hover .capa-pe{color:var(--texto)}
 .capa-pe .n{font-weight:700;color:var(--acento)}
 
 .abre-peca{display:inline-flex;align-items:center;gap:.4rem;margin:.55rem 0 0;
-           font-family:var(--mono);font-size:11px;letter-spacing:.1em;
-           text-transform:uppercase;color:var(--acento);text-decoration:none;
+           font-family:var(--mono);font-size:11px;letter-spacing:var(--entreletra-rotulo);
+           text-transform:var(--caixa-rotulo);color:var(--acento);text-decoration:none;
            border-bottom:1px solid transparent}
 .abre-peca:hover{border-bottom-color:var(--acento)}
 .abre-peca .seta{font-size:13px;line-height:1}
@@ -389,7 +422,7 @@ p{margin:0;max-width:var(--medida)}
 .campos{display:flex;flex-direction:column;gap:.35rem;max-width:var(--medida)}
 .campos > div{display:grid;grid-template-columns:130px 1fr;gap:.9rem;font-size:13.5px;
               border-bottom:1px dotted var(--linha);padding-bottom:.35rem;line-height:1.5}
-.campos dt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--miudo)}
+.campos dt{font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo)}
 .campos dd{margin:0}
 @media (max-width:560px){ .campos > div{grid-template-columns:1fr;gap:.15rem} }
 
@@ -405,11 +438,11 @@ p{margin:0;max-width:var(--medida)}
                font-size:1.35rem;line-height:1.25;color:var(--miudo);min-width:1.1em}
 .slide .conteudo{display:flex;flex-direction:column;gap:.3rem}
 .slide .capa-txt{font-family:var(--display);font-size:clamp(1.15rem,4vw,1.6rem);
-                 line-height:1;text-transform:uppercase}
+                 line-height:1;text-transform:var(--caixa-manchete)}
 .slide .corpo{font-size:14.5px;line-height:1.55}
 .slide .dir{font-size:11.5px;color:var(--miudo);line-height:1.45}
 .slide.antidoto{border-left:4px solid var(--marcador);padding-left:.8rem;background:var(--caixa)}
-.slide.antidoto .rotulo{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+.slide.antidoto .rotulo{font-size:11px;letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo);font-weight:700}
 
 .roteiro{display:flex;flex-direction:column;gap:.5rem}
 .corte{display:grid;grid-template-columns:78px 1fr;gap:.9rem;align-items:start;
@@ -431,7 +464,7 @@ p{margin:0;max-width:var(--medida)}
 .peca-titulo .n{font-family:var(--display);font-size:1.8rem;line-height:1;color:var(--tinta);
                 background:var(--marcador);padding:.12em .3em .06em;flex:none;align-self:center}
 .peca-titulo .nome{font-family:var(--display);font-size:clamp(1.4rem,4.5vw,2rem);
-                   line-height:.95;text-transform:uppercase;font-weight:400}
+                   line-height:var(--entrelinha-manchete);text-transform:var(--caixa-manchete);font-weight:var(--peso-manchete)}
 
 /* ---- superfícies visuais ---- */
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1rem}
@@ -445,7 +478,7 @@ p{margin:0;max-width:var(--medida)}
 
 /* miniatura quadrada da grade do perfil */
 .grid-tile{aspect-ratio:1;display:grid;place-items:center;padding:.4rem;text-align:center;
-           font-size:8.5px;line-height:1.2;letter-spacing:.04em;text-transform:uppercase}
+           font-size:8.5px;line-height:1.2;letter-spacing:.04em;text-transform:var(--caixa-rotulo)}
 
 .swatch{width:14px;height:44px;border:1px solid var(--linha)}
 .chip{height:46px;border:1px solid var(--linha)}
@@ -453,8 +486,8 @@ p{margin:0;max-width:var(--medida)}
 /* internos do mockup — compartilhados por manual, produção e calendário.
    Valores em px são só o plano B; o bloco @supports abaixo transforma o
    mockup num modelo em escala de verdade. */
-.mock .manchete{font-family:var(--display);font-size:clamp(1.15rem,3.4vw,1.5rem);line-height:.95;
-                text-transform:uppercase;text-wrap:balance}
+.mock .manchete{font-family:var(--display);font-size:clamp(1.15rem,3.4vw,1.5rem);line-height:var(--entrelinha-manchete);
+                text-transform:var(--caixa-manchete);text-wrap:balance}
 .mock .corpo{font-size:12px;line-height:1.45}
 .mock .rodape{display:flex;justify-content:space-between;align-items:flex-end;gap:.5rem;
               font-size:9px;letter-spacing:.06em;opacity:.6}
@@ -463,7 +496,7 @@ p{margin:0;max-width:var(--medida)}
 .mock .traducao b{display:block}
 .mock .traducao i{font-style:normal;opacity:.62}
 .carimbo-selo{align-self:flex-start;border:2px solid var(--carimbo);color:var(--carimbo);
-              font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+              font-size:11px;font-weight:700;letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo);
               padding:.2rem .5rem;transform:rotate(-7deg)}
 
 /* MODELO EM ESCALA
@@ -491,7 +524,7 @@ p{margin:0;max-width:var(--medida)}
   .mock .mark{padding:0 .12em}
 }
 .legenda-peca{display:flex;flex-direction:column;gap:.15rem}
-.legenda-peca b{font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.legenda-peca b{font-size:12px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo)}
 .legenda-peca span{font-size:11.5px;color:var(--miudo);line-height:1.4}
 
 /* =========================================================================
@@ -511,7 +544,7 @@ p{margin:0;max-width:var(--medida)}
 .tarefa-item[data-feito="1"] .tarefa-txt b{text-decoration:line-through;color:var(--miudo)}
 
 .agora-pe{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
-          flex-wrap:wrap;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+          flex-wrap:wrap;font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
           color:var(--miudo);margin-top:.55rem}
 .barra-progresso{height:6px;background:var(--linha);margin-top:.5rem}
 .barra-progresso i{display:block;height:100%;background:var(--marcador);
@@ -531,7 +564,7 @@ p{margin:0;max-width:var(--medida)}
 .numeros > div{background:var(--ground);padding:.8rem .6rem;text-align:center;
                display:flex;flex-direction:column;gap:.15rem}
 .numeros b{font-family:var(--display);font-size:1.9rem;line-height:1;font-weight:400}
-.numeros span{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--miudo)}
+.numeros span{font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo)}
 
 /* =========================================================================
    HOME
@@ -539,8 +572,8 @@ p{margin:0;max-width:var(--medida)}
 
 .capa{display:flex;flex-direction:column;gap:1.2rem;border-bottom:2px dashed var(--linha);
       padding-bottom:2.5rem}
-.capa h1{font-family:var(--display);font-weight:400;text-transform:uppercase;margin:0;
-         font-size:clamp(3rem,12vw,6rem);line-height:.82}
+.capa h1{font-family:var(--display);font-weight:var(--peso-manchete);text-transform:var(--caixa-manchete);margin:0;
+         font-size:clamp(3rem,12vw,6rem);line-height:var(--entrelinha-manchete)}
 .capa .desc{font-size:clamp(1rem,3.2vw,1.35rem);letter-spacing:.05em;margin:0}
 .capa .glifo{width:78px;height:78px;color:var(--texto)}
 
@@ -556,7 +589,7 @@ p{margin:0;max-width:var(--medida)}
 .estado{display:flex;flex-direction:column;gap:.35rem;max-width:var(--medida)}
 .estado > div{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:baseline;
               border-bottom:1px dotted var(--linha);padding-bottom:.35rem;font-size:13.5px}
-.estado .selo{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+.estado .selo{font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);font-weight:700;
               padding:.1rem .45rem;white-space:nowrap}
 .selo-pronto{background:var(--marcador);color:var(--tinta)}
 .selo-voce{border:1px solid var(--acento);color:var(--acento)}
@@ -569,14 +602,14 @@ p{margin:0;max-width:var(--medida)}
 /* cabeçalho de página de documento */
 .pg-cabeca{display:flex;flex-direction:column;gap:.7rem;
            border-bottom:2px dashed var(--linha);padding-bottom:2rem}
-.pg-cabeca h1{font-family:var(--display);font-weight:400;text-transform:uppercase;margin:0;
-              font-size:clamp(2.2rem,7vw,3.6rem);line-height:.88}
+.pg-cabeca h1{font-family:var(--display);font-weight:var(--peso-manchete);text-transform:var(--caixa-manchete);margin:0;
+              font-size:clamp(2.2rem,7vw,3.6rem);line-height:var(--entrelinha-manchete)}
 
 /* grade de cartões com moldura compartilhada */
 .cartoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;
          background:var(--linha);border:1px solid var(--linha)}
 .cartoes > div{background:var(--ground);padding:1rem;display:flex;flex-direction:column;gap:.4rem}
-.cartoes b{font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.cartoes b{font-size:13px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo)}
 .cartoes p{font-size:13px;line-height:1.5}
 
 /* tabela de dados */
@@ -584,7 +617,7 @@ p{margin:0;max-width:var(--medida)}
 table{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
 th,td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--linha-fraca);
       vertical-align:top;line-height:1.45}
-th{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--miudo);
+th{font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo);
    background:var(--caixa);white-space:nowrap}
 td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700}
 tr:last-child td{border-bottom:0}
@@ -598,7 +631,7 @@ tr:last-child td{border-bottom:0}
 .logo-caixa.negativo .rotulo{color:var(--espinha-miudo)}
 .logo-caixa.amarelo{background:var(--marcador);border-color:var(--marcador)}
 .logo-caixa.amarelo .rotulo{color:var(--tinta-60)}
-.rotulo{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--miudo);
+.rotulo{font-size:10px;letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo);color:var(--miudo);
         text-align:center}
 .assinatura{font-family:var(--display);font-size:2.9rem;line-height:.85;display:flex;
             align-items:flex-start}
@@ -628,13 +661,13 @@ tr:last-child td{border-bottom:0}
 /* tipografia */
 .specimen{border:1px solid var(--linha);padding:1.25rem;display:flex;flex-direction:column;gap:.5rem}
 .specimen .amostra-display{font-family:var(--display);font-size:clamp(2.2rem,8vw,3.6rem);
-                           line-height:.88;text-transform:uppercase;margin:0}
+                           line-height:var(--entrelinha-manchete);text-transform:var(--caixa-manchete);margin:0}
 .specimen .amostra-mono{font-size:15px;margin:0}
 
 /* tom de voz */
 .regua{display:flex;flex-direction:column;gap:.5rem;max-width:var(--medida)}
 .regua-barra{display:grid;grid-template-columns:5fr 3fr 2fr;height:44px;
-             border:1px solid var(--texto);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+             border:1px solid var(--texto);font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo)}
 .regua-barra > div{display:grid;place-items:center;text-align:center;padding:0 .4rem}
 .regua-barra .zona{background:var(--marcador);color:var(--tinta);font-weight:700}
 .regua-legenda{display:flex;justify-content:space-between;font-size:11px;color:var(--miudo);
@@ -651,7 +684,7 @@ tr:last-child td{border-bottom:0}
 .lexico i{font-style:normal;color:var(--miudo)}
 .frases{display:flex;flex-direction:column;gap:.7rem}
 .frases p{font-family:var(--display);font-size:clamp(1.3rem,4.5vw,1.8rem);line-height:1.05;
-          text-transform:uppercase;max-width:22ch}
+          text-transform:var(--caixa-manchete);max-width:22ch}
 
 /* palco de vocabulário visual — o conteúdo dele
    é escrito depois do bloco 2 da entrevista */
@@ -660,7 +693,7 @@ tr:last-child td{border-bottom:0}
 .balao::after{content:"";position:absolute;bottom:-9px;left:16px;border:5px solid transparent;
               border-top-color:var(--tinta)}
 .colagem .manchete-col{position:absolute;left:5%;bottom:6%;font-family:var(--display);
-  font-size:clamp(1.3rem,5vw,2.2rem);line-height:.92;text-transform:uppercase;
+  font-size:clamp(1.3rem,5vw,2.2rem);line-height:var(--entrelinha-manchete);text-transform:var(--caixa-manchete);
   color:var(--papel);max-width:62%}
 
 /* o mapa */
@@ -669,7 +702,7 @@ tr:last-child td{border-bottom:0}
 .eixo-topo{display:flex;align-items:baseline;gap:.7rem;border-bottom:2px solid var(--texto);
            padding-bottom:.3rem;flex-wrap:wrap}
 .eixo-topo .id{font-family:var(--display);font-size:1.5rem;line-height:1;color:var(--acento);flex:none}
-.eixo-topo b{font-size:14px;letter-spacing:.16em;text-transform:uppercase}
+.eixo-topo b{font-size:14px;letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo)}
 .eixo-topo em{font-style:normal;font-size:11px;color:var(--miudo);letter-spacing:.08em;
               margin-left:auto;text-align:right}
 .eixo ul{list-style:none;padding:0;margin:0;font-size:13.5px;line-height:1.45;
@@ -697,20 +730,20 @@ tr:last-child td{border-bottom:0}
 .controles{display:flex;flex-direction:column;gap:1rem;border:1px solid var(--linha);
            padding:1.1rem;background:var(--caixa)}
 .campo{display:flex;flex-direction:column;gap:.35rem}
-.campo label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--miudo)}
+.campo label{font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo)}
 .campo output{font-size:12px;color:var(--texto);font-variant-numeric:tabular-nums}
 input[type=range]{width:100%;accent-color:var(--acento)}
 .opcoes{display:flex;flex-wrap:wrap;gap:.35rem}
-.opcoes button{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+.opcoes button{font-family:var(--mono);font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
   padding:.35rem .6rem;border:1px solid var(--linha);background:transparent;color:var(--texto);
   cursor:pointer}
 .opcoes button[aria-pressed="true"]{background:var(--marcador);border-color:var(--marcador);
   color:var(--tinta);font-weight:700}
-.acao{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+.acao{font-family:var(--mono);font-size:12px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
   font-weight:700;padding:.6rem .8rem;border:2px solid var(--texto);background:var(--texto);
   color:var(--ground);cursor:pointer}
 .baixar{display:flex;gap:.4rem;flex-wrap:wrap}
-.baixar button{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+.baixar button{font-family:var(--mono);font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
   padding:.3rem .5rem;border:1px solid var(--linha);background:transparent;color:var(--miudo);
   cursor:pointer}
 .baixar button:hover{color:var(--texto);border-color:var(--texto)}
@@ -724,7 +757,7 @@ input[type=range]{width:100%;accent-color:var(--acento)}
               aspect-ratio:4/3;overflow:hidden}
 .asset-quadro.escuro{background:var(--tinta);border-color:var(--tinta)}
 .asset-quadro svg{width:100%;height:100%}
-.asset .nome{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.asset .nome{font-size:11.5px;font-weight:700;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo)}
 .asset .uso{font-size:11.5px;color:var(--miudo);line-height:1.4}
 
 .trilho{display:flex;gap:6px;overflow-x:auto;padding-bottom:.5rem;min-width:0}
@@ -732,8 +765,8 @@ input[type=range]{width:100%;accent-color:var(--acento)}
   color:var(--papel);padding:.9rem;display:flex;flex-direction:column;justify-content:flex-end;
   overflow:hidden}
 .slide-demo .banda{position:absolute;left:0;right:0;top:38%;height:16px;background:var(--marcador)}
-.slide-demo .txt{position:relative;font-family:var(--display);font-size:1.05rem;line-height:.95;
-                 text-transform:uppercase}
+.slide-demo .txt{position:relative;font-family:var(--display);font-size:1.05rem;line-height:var(--entrelinha-manchete);
+                 text-transform:var(--caixa-manchete)}
 .slide-demo .clausula{position:absolute;top:.7rem;left:.9rem;font-size:9px;letter-spacing:.14em;
                       color:var(--papel-55)}
 .slide-demo .ast-canto{position:absolute;bottom:.7rem;right:.7rem;width:16px;height:16px;
@@ -748,17 +781,17 @@ input[type=range]{width:100%;accent-color:var(--acento)}
 .semana{border:1px solid var(--linha);display:flex;flex-direction:column}
 .semana-topo{display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap;background:var(--caixa);
              padding:.7rem .9rem;border-bottom:1px solid var(--linha)}
-.semana-topo b{font-size:13px;letter-spacing:.18em;text-transform:uppercase}
+.semana-topo b{font-size:13px;letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo)}
 .semana-topo em{font-style:normal;font-size:12px;color:var(--miudo);margin-left:auto}
 
 .dia{display:grid;grid-template-columns:62px 14px 1fr;gap:.9rem;align-items:start;
      padding:.85rem .9rem;border-bottom:1px dotted var(--linha)}
 .dia:last-child{border-bottom:0}
-.dia .quando{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--miudo);
+.dia .quando{font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo);
              padding-top:.2rem;line-height:1.4}
 .dia .oque{display:flex;flex-direction:column;gap:.2rem}
 .dia .dia-tit{font-size:14.5px;font-weight:700;line-height:1.35}
-.dia .meta{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--miudo)}
+.dia .meta{font-size:11px;letter-spacing:.08em;text-transform:var(--caixa-rotulo);color:var(--miudo)}
 .dia .tarefa{font-size:13px;line-height:1.5}
 .swatch.sw-tinta{background:var(--tinta)}
 .swatch.sw-papel{background:var(--papel)}
@@ -769,7 +802,7 @@ input[type=range]{width:100%;accent-color:var(--acento)}
 .dest .bola{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;
             border:2px solid var(--linha)}
 .dest .bola svg{width:32px;height:32px}
-.dest span{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;text-align:center;
+.dest span{font-size:9.5px;letter-spacing:.06em;text-transform:var(--caixa-rotulo);text-align:center;
            color:var(--miudo);line-height:1.25}
 
 .grade-perfil{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:330px}
@@ -788,7 +821,7 @@ input[type=range]{width:100%;accent-color:var(--acento)}
 .barra-filtros{display:flex;flex-direction:column;gap:.7rem;
                border:1px solid var(--linha);padding:.9rem 1rem;background:var(--caixa)}
 .filtro-linha{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
-.filtro-rot{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--miudo);
+.filtro-rot{font-size:10px;letter-spacing:var(--entreletra-rotulo-larga);text-transform:var(--caixa-rotulo);color:var(--miudo);
             min-width:58px;flex:none}
 /* .chip já é a amostra de cor da paleta — este é outro componente */
 .filtro-btn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:.28rem .55rem;
@@ -798,8 +831,8 @@ input[type=range]{width:100%;accent-color:var(--acento)}
 .filtro-btn[aria-pressed="true"]{background:var(--marcador);border-color:var(--marcador);
                            color:var(--tinta);font-weight:700}
 .filtro-resumo{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
-               font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--miudo)}
-.limpar{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+               font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo)}
+.limpar{font-family:var(--mono);font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
         background:none;border:0;color:var(--acento);cursor:pointer;padding:0;
         text-decoration:underline}
 
@@ -825,7 +858,7 @@ input[type=range]{width:100%;accent-color:var(--acento)}
 
 /* detalhe */
 .volta{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
-.btn-volta{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+.btn-volta{font-family:var(--mono);font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
            background:transparent;border:1px solid var(--linha);color:var(--texto);
            padding:.4rem .7rem;cursor:pointer}
 .btn-volta:hover{border-color:var(--texto)}
@@ -885,15 +918,15 @@ input[type="date"]{font-family:var(--mono);font-size:13px;padding:.45rem .55rem;
 .marco{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
        background:var(--linha);border:1px solid var(--linha)}
 .marco > div{background:var(--ground);padding:.7rem .8rem;display:flex;flex-direction:column;gap:.15rem}
-.marco dt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--miudo)}
+.marco dt{font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo)}
 .marco dd{margin:0;font-size:14px;font-weight:700;line-height:1.3}
 .marco dd small{display:block;font-weight:400;font-size:11.5px;color:var(--miudo);
                 letter-spacing:0;text-transform:none;margin-top:.1rem}
 
 .rastreador-pe{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
-               flex-wrap:wrap;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+               flex-wrap:wrap;font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
                color:var(--miudo)}
-.redefinir{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+.redefinir{font-family:var(--mono);font-size:10px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);
            background:none;border:0;color:var(--acento);cursor:pointer;padding:0;
            text-decoration:underline}
 
@@ -901,7 +934,7 @@ input[type="date"]{font-family:var(--mono);font-size:13px;padding:.45rem .55rem;
 .prep{display:grid;grid-template-columns:76px 1fr;gap:.9rem;align-items:start;
       padding:.8rem .9rem;border-bottom:1px dotted var(--linha)}
 .prep:last-child{border-bottom:0}
-.prep .quando{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--miudo);
+.prep .quando{font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo);
               line-height:1.4;padding-top:.15rem}
 .prep .quando b{display:block;font-size:13px;color:var(--texto);letter-spacing:.06em}
 .prep .quando .data{display:block;font-size:12.5px;font-weight:700;color:var(--texto);
@@ -917,7 +950,7 @@ input[type="date"]{font-family:var(--mono);font-size:13px;padding:.45rem .55rem;
 .dia .data{display:block;font-size:12.5px;font-weight:700;color:var(--texto);
            font-variant-numeric:tabular-nums;margin-top:.15rem}
 .dia .publicar{display:flex;align-items:center;gap:.45rem;margin-top:.4rem;
-               font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--miudo);
+               font-size:11px;letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);color:var(--miudo);
                cursor:pointer;width:fit-content}
 .dia .publicar input{width:15px;height:15px;accent-color:var(--acento);cursor:pointer;margin:0}
 .dia[data-estado="hoje"]{background:var(--marcador-forte)}
@@ -926,7 +959,7 @@ input[type="date"]{font-family:var(--mono);font-size:13px;padding:.45rem .55rem;
 .dia[data-publicado="1"] .dia-tit{text-decoration:line-through;color:var(--miudo)}
 .dia[data-publicado="1"] .publicar{color:var(--texto)}
 .selo-hoje{background:var(--marcador);color:var(--tinta);font-size:9px;font-weight:700;
-           letter-spacing:.14em;text-transform:uppercase;padding:.1rem .35rem;
+           letter-spacing:var(--entreletra-rotulo);text-transform:var(--caixa-rotulo);padding:.1rem .35rem;
            display:inline-block;margin-top:.2rem}
 
 /* =========================================================================
@@ -1186,14 +1219,43 @@ a{color:inherit}
         <p class="desc">Por que esta marca existe, e por que agora.</p>
       </header>
 
+      <div class="callout dest">
+        <p><b>Para marca em que o conteúdo não é o produto, esta página começa pelo produto.</b> O molde nasceu de uma marca de conteúdo, onde o conteúdo <em>era</em> a coisa vendida e a monetização cabia numa seção lá no fim. Quando existe um negócio que já fatura, isso inverte: o que se vende é a espinha, e cada peça precisa saber o que ela move. Peça sem destino é peça sem função.</p>
+      </div>
+
       <section class="sec">
-        <h2 class="cab"><span class="n">1</span><span class="tit">A ideia original</span></h2>
+        <h2 class="cab"><span class="n">1</span><span class="tit">O que se vende</span></h2>
+        <p>A lista do que o negócio realmente fatura. Não é o portfólio institucional — é o que entra dinheiro por.</p>
+        <div class="tabela-rolo">
+          <table class="tabela">
+            <thead><tr><th>Produto</th><th>Quem compra</th><th>Por qual canal</th><th>Onde trava hoje</th></tr></thead>
+            <tbody>
+              <tr><td>[PRODUTO 1]</td><td>[QUEM COMPRA]</td><td>[CANAL DE VENDA]</td><td>[O GARGALO]</td></tr>
+              <tr><td>[PRODUTO 2]</td><td>[QUEM COMPRA]</td><td>[CANAL DE VENDA]</td><td>[O GARGALO]</td></tr>
+              <tr><td>[PRODUTO 3]</td><td>[QUEM COMPRA]</td><td>[CANAL DE VENDA]</td><td>[O GARGALO]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="micro">A coluna <b>onde trava</b> é a que dá pauta. Produto que vende sozinho não precisa de conteúdo; produto que trava numa dúvida específica precisa de uma peça que responda aquela dúvida. Preencher essa coluna com "divulgação" é não ter respondido.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">2</span><span class="tit">O que o conteúdo precisa mover</span></h2>
+        <p>[O QUE ESTE CONTEÚDO PRECISA PRODUZIR — RESERVA, INGRESSO, LEAD, VISITA, RECOMPRA, DEFESA DE PREÇO]</p>
+        <p>[E O QUE ELE EXPLICITAMENTE NÃO PRECISA FAZER, PARA NÃO SER COBRADO DISSO]</p>
+        <div class="callout">
+          <p><b>Nem todo produto da lista acima entra aqui.</b> Conteúdo orgânico é ruim de fundo de funil e bom de topo; se o gargalo de um produto é preço ou operação, peça de Instagram não resolve e a marca gasta três meses descobrindo isso. Declare quais produtos <em>não</em> são alvo deste conteúdo.</p>
+        </div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">3</span><span class="tit">A ideia original</span></h2>
         <p>[DE ONDE VEIO A MARCA — A OBSERVAÇÃO, O INCÔMODO OU A OPORTUNIDADE QUE A ORIGINOU]</p>
         <p class="micro">Marca consolidada já tem esta resposta escrita em algum lugar. Aqui é transcrição, não descoberta — se estiver no manual que você entregou, copie de lá em vez de reinventar.</p>
       </section>
 
       <section class="sec">
-        <h2 class="cab"><span class="n">2</span><span class="tit">A tese</span></h2>
+        <h2 class="cab"><span class="n">4</span><span class="tit">A tese</span></h2>
         <h3>A frase que vai ao ar</h3>
         <p class="lede">[A TESE EM UMA FRASE]</p>
         <h3>Por que isso vira conteúdo</h3>
@@ -1203,7 +1265,26 @@ a{color:inherit}
       </section>
 
       <section class="sec">
-        <h2 class="cab"><span class="n">3</span><span class="tit">Referências</span></h2>
+        <h2 class="cab"><span class="n">5</span><span class="tit">Os públicos</span></h2>
+        <p>Plural de propósito. "Público-alvo" no singular é o que faz uma marca com quatro funis escrever para um só — e a peça que serve todo mundo não serve ninguém.</p>
+        <div class="tabela-rolo">
+          <table class="tabela">
+            <thead><tr><th>Público</th><th>O que consome</th><th>O que compra</th><th>Por onde entra</th></tr></thead>
+            <tbody>
+              <tr><td>[PÚBLICO 1]</td><td>[O QUE ELE VÊ NO FEED]</td><td>[O QUE ELE COMPRA]</td><td>[CANAL DE ENTRADA]</td></tr>
+              <tr><td>[PÚBLICO 2]</td><td>[O QUE ELE VÊ NO FEED]</td><td>[O QUE ELE COMPRA]</td><td>[CANAL DE ENTRADA]</td></tr>
+              <tr><td>[PÚBLICO 3]</td><td>[O QUE ELE VÊ NO FEED]</td><td>[O QUE ELE COMPRA]</td><td>[CANAL DE ENTRADA]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Quem consome sem comprar, e quem compra sem consumir</h3>
+        <p>[QUEM VÊ O CONTEÚDO E NUNCA VAI PAGAR — E POR QUE VALE MANTER]</p>
+        <p>[QUEM PAGA SEM NUNCA TER VISTO UMA PEÇA — E O QUE ISSO SIGNIFICA PARA A META]</p>
+        <p class="micro">A segunda linha é a que corrige expectativa. Se metade do faturamento entra por canal que não passa pelo conteúdo, cobrar do conteúdo a metade inteira é o jeito mais rápido de matar um projeto que estava funcionando.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">6</span><span class="tit">Referências</span></h2>
         <p>Três a cinco perfis ou marcas que já fazem bem alguma parte do que esta vai fazer. <b>Não é para imitar.</b> É para nomear o que se rouba de cada — e o que não se rouba.</p>
         <div class="cartoes">
           <div class="cartao"><b>[REFERÊNCIA 1]</b><span>[O QUE ELA FAZ BEM]</span></div>
@@ -1219,36 +1300,15 @@ a{color:inherit}
       </section>
 
       <section class="sec">
-        <h2 class="cab"><span class="n">4</span><span class="tit">O espaço vazio</span></h2>
+        <h2 class="cab"><span class="n">7</span><span class="tit">O espaço vazio</span></h2>
         <p>[O QUE NINGUÉM ESTÁ FAZENDO NESTE MERCADO, E QUE ESTA MARCA VAI OCUPAR]</p>
         <p class="micro">Se a resposta for "ninguém faz isso" sem exemplo, o espaço provavelmente não está vazio — está sem demanda. Nomeie quem chega perto e onde para.</p>
       </section>
 
       <section class="sec">
-        <h2 class="cab"><span class="n">5</span><span class="tit">O enquadramento</span></h2>
+        <h2 class="cab"><span class="n">8</span><span class="tit">O enquadramento</span></h2>
         <p>[A LEITURA ERRADA MAIS PROVÁVEL DA MARCA, E COMO O CONTEÚDO A CORRIGE]</p>
-      </section>
-
-      <section class="sec">
-        <h2 class="cab"><span class="n">6</span><span class="tit">O público</span></h2>
-        <h3>Quem consome</h3>
-        <p>[QUEM VÊ O CONTEÚDO NO FEED]</p>
-        <h3>Quem decide</h3>
-        <p>[QUEM PAGA, CONTRATA OU AUTORIZA — QUANDO NÃO É A MESMA PESSOA]</p>
-        <p class="micro">Público duplo muda o conteúdo inteiro: a peça precisa funcionar para quem rola o feed <em>e</em> não constranger quem assina embaixo. Se for a mesma pessoa, escreva "é a mesma pessoa" — isso também é resposta.</p>
-      </section>
-
-      <section class="sec">
-        <h2 class="cab"><span class="n">7</span><span class="tit">O nome</span></h2>
-        <p>[O QUE O NOME SIGNIFICA E POR QUE ELE FOI ESCOLHIDO]</p>
-        <h3>[O ELEMENTO GRÁFICO QUE O NOME CARREGA]</h3>
-        <p>[SE O NOME TEM UM SINAL, UM ACENTO OU UMA MARCA QUE VIRA ELEMENTO VISUAL, ELE MORA AQUI]</p>
-      </section>
-
-      <section class="sec">
-        <h2 class="cab"><span class="n">8</span><span class="tit">Objetivo de negócio</span></h2>
-        <p>[O QUE ESTE CONTEÚDO PRECISA PRODUZIR — VENDA, RESERVA, LEAD, RECONHECIMENTO, DEFESA DE PREÇO]</p>
-        <p class="micro">Escreva o objetivo REAL, mesmo que seja pouco nobre. Objetivo escondido reaparece como peça incoerente três meses depois.</p>
+        <p class="micro">Marca consolidada carrega enquadramento herdado, e ele raramente está no manual — mora no que as pessoas comentam. Vale ler os comentários do que já foi publicado antes de responder isto de cabeça.</p>
       </section>
 
       <section class="sec">
@@ -1592,39 +1652,59 @@ a{color:inherit}
       <header class="pg-cabeca">
         <p class="micro">Documento 6</p>
         <h1>Calendário</h1>
-        <p class="desc">A ordem de publicação, a montagem antes dela, e o rastreador do que já saiu.</p>
+        <p class="desc">O que já está no ar, o que manda na ordem, e o rastreador do que saiu.</p>
       </header>
 
+      <div class="callout dest">
+        <p><b>Esta página supunha uma estreia, e foi corrigida.</b> O molde nasceu de uma marca em pré-lançamento — tinha "Semana 0 · montagem" e cronograma contado para trás até o dia zero. Marca consolidada já publica há anos: a pergunta não é <em>o que fazer antes de estrear</em>, é <em>o que já existe, o que continua valendo e o que sai do ar</em>.</p>
+      </div>
+
       <section class="sec">
-        <h2 class="cab"><span class="n">1</span><span class="tit">O que acontece com quem chega</span></h2>
-        <p>[O QUE ALGUÉM VÊ AO ABRIR O PERFIL PELA PRIMEIRA VEZ, E EM QUE ORDEM]</p>
+        <h2 class="cab"><span class="n">1</span><span class="tit">O que já está no ar</span></h2>
+        <p>[QUANTAS PUBLICAÇÕES EXISTEM, DE QUANDO É A MAIS ANTIGA QUE AINDA REPRESENTA A MARCA]</p>
+        <div class="tabela-rolo">
+          <table class="tabela">
+            <thead><tr><th>O que existe</th><th>Situação</th><th>O que fazer</th></tr></thead>
+            <tbody>
+              <tr><td>[CONJUNTO DE POSTS 1]</td><td>[AINDA REPRESENTA / ENVELHECEU / CONTRADIZ]</td><td>[MANTER / REFAZER / TIRAR DO AR]</td></tr>
+              <tr><td>[CONJUNTO DE POSTS 2]</td><td>[AINDA REPRESENTA / ENVELHECEU / CONTRADIZ]</td><td>[MANTER / REFAZER / TIRAR DO AR]</td></tr>
+              <tr><td>[DESTAQUES / FIXADOS]</td><td>[AINDA REPRESENTA / ENVELHECEU / CONTRADIZ]</td><td>[MANTER / REFAZER / TIRAR DO AR]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="micro">A coluna do meio tem três estados e não dois. <b>Contradiz</b> é diferente de <b>envelheceu</b>: post velho que ainda diz a verdade é acervo, post que promete o que a marca não faz mais é passivo — e é o primeiro que alguém encontra quando desce o perfil.</p>
       </section>
 
       <section class="sec">
-        <h2 class="cab"><span class="n">2</span><span class="tit">Semana 0 · montagem</span></h2>
-        <p>[O QUE PRECISA ESTAR PRONTO ANTES DA PRIMEIRA PUBLICAÇÃO]</p>
-        <div class="semana" id="semana-zero"></div>
+        <h2 class="cab"><span class="n">2</span><span class="tit">O que manda na ordem</span></h2>
+        <p>[O CALENDÁRIO QUE JÁ EXISTE E AO QUAL ESTE SE SUBORDINA — TEMPORADA, FERIADO, FÉRIAS ESCOLARES, SAFRA, CICLO DE MATRÍCULA, CAMPANHA]</p>
+        <div class="callout">
+          <p><b>Se o negócio é sazonal, o conteúdo não tem ritmo próprio — ele tem janelas.</b> A mesma peça vale cinco vezes mais na semana certa e vira ruído na errada. Um calendário de conteúdo que ignora o calendário comercial produz esforço constante com retorno irregular, e ninguém consegue explicar por quê.</p>
+          <p class="micro">Onde isso aparece no código: o script desta página tem <code>MODO</code>, que aceita <b>cadência</b> (ritmo fixo a partir de uma data) ou <b>âncoras</b> (janelas nomeadas com datas próprias). Negócio sazonal usa âncoras.</p>
+        </div>
+        <p>[SE JÁ EXISTE UM CALENDÁRIO COMERCIAL EM ALGUM SISTEMA, DIGA QUAL — ESTE DEVE DERIVAR DELE E NÃO SER DIGITADO DE NOVO]</p>
       </section>
 
       <section class="sec">
-        <h2 class="cab"><span class="n">3</span><span class="tit">Cronograma de montagem</span></h2>
-        <p>[O QUE SE FAZ EM CADA DIA ANTES DA ESTREIA, CONTADO PARA TRÁS]</p>
-        <div class="prep" id="prep"></div>
+        <h2 class="cab"><span class="n">3</span><span class="tit">As janelas</span></h2>
+        <p>[AS JANELAS DO PERÍODO, COM NOME E DATA — E O QUE CADA UMA PRECISA VENDER]</p>
+        <div class="semana" id="janelas"></div>
+        <p class="micro">Janela é diferente de semana. Uma janela pode ter três dias (um feriado) ou seis semanas (férias escolares), e o número de peças dentro dela varia com o que ela vale.</p>
       </section>
 
       <section class="sec">
         <h2 class="cab"><span class="n">4</span><span class="tit">O rastreador</span></h2>
-        <p>Marque a data de estreia e o rastreador calcula em que semana o projeto está, o que sai hoje, o que vem a seguir e o que já foi publicado. Fica salvo neste navegador.</p>
+        <p>Marque a data de referência e o rastreador calcula onde o período está, o que sai hoje, o que vem a seguir e o que já foi publicado. Fica salvo neste navegador.</p>
         <div class="campos">
-          <label class="campo" for="campo-estreia">Data de estreia
+          <label class="campo" for="campo-estreia">Data de referência
             <input type="date" id="campo-estreia">
           </label>
           <button class="redefinir" id="redefinir-estreia" type="button">limpar</button>
         </div>
         <div class="rastreador" id="rastreador">
-          <p class="rastreador-vazio">Escolha a data de estreia para o rastreador começar.</p>
+          <p class="rastreador-vazio">Escolha a data de referência para o rastreador começar.</p>
         </div>
-        <p class="micro">A frequência está declarada no script desta página, em <code>OFFSETS</code> e <code>SEMANAS</code>: <span class="colchete">[QUAIS DIAS DA SEMANA]</span> e <span class="colchete">[QUANTAS SEMANAS]</span>. Trocar a frequência é trocar esses dois valores — e não a prosa daqui.</p>
+        <p class="micro">O modo está declarado no script desta página, em <code>MODO</code>: <span class="colchete">[CADÊNCIA OU ÂNCORAS]</span>. Em cadência, preencha <code>OFFSETS</code> e <code>SEMANAS</code>; em âncoras, preencha <code>JANELAS</code>. Trocar o ritmo é trocar esses valores — e não a prosa daqui.</p>
       </section>
 
       <section class="sec">
@@ -1640,6 +1720,11 @@ a{color:inherit}
       <section class="sec">
         <h2 class="cab"><span class="n">7</span><span class="tit">Reconhecimento</span></h2>
         <p>[COMO SE SABE QUE ESTÁ FUNCIONANDO — QUAL NÚMERO, E EM QUANTO TEMPO]</p>
+        <p>[EM QUAL INSTRUMENTO ESSE NÚMERO JÁ É MEDIDO HOJE]</p>
+        <div class="callout">
+          <p><b>A segunda linha vem antes da primeira.</b> Negócio consolidado quase sempre já mede tráfego, origem de lead e conversão em algum lugar — painel, planilha, CRM, o próprio sistema de venda. Inventar métrica nova para o conteúdo cria um número que só existe nesta página, que ninguém confere, e que não conversa com o que a diretoria já olha.</p>
+          <p class="micro">Se o instrumento existe, esta seção aponta para ele. Se não existe, isso é uma pendência de <em>ferramenta</em>, e não de conteúdo — registre como tal em vez de resolver com estimativa.</p>
+        </div>
         <p class="micro">Data que vence sem desfecho registrado é o defeito que nenhum conferidor de qualidade pega. Registrar "não publicado, porque X" satisfaz igual: a conferência não tem opinião sobre o projeto estar em dia, tem opinião sobre o projeto saber onde está.</p>
       </section>
     </div>
@@ -2453,16 +2538,29 @@ a{color:inherit}
 
 <script>
 /* =========================================================================
-   CALENDÁRIO — rastreador de publicação.
+   CALENDÁRIO — rastreador de publicação, em dois modos.
 
-   Difere do original de propósito, e a diferença é uma correção. Lá os dias
-   eram elementos div.dia escritos à mão no HTML e a ficha das peças vivia
-   no JavaScript: duas fontes para um dado só, que precisaram de um
-   conferidor dedicado para não divergirem. Aqui os dias são DERIVADOS de
-   PECAS. Uma peça a mais no array é um dia a mais no calendário, e não há
-   como discordarem.
+   DUAS DIFERENÇAS DELIBERADAS EM RELAÇÃO AO CASCO DE ORIGEM.
 
-   O que continua igual, porque continua certo: data que vence sem desfecho
+   1. Os dias são DERIVADOS de PECAS. Lá eram elementos div.dia escritos à
+      mão no HTML enquanto a ficha vivia no JavaScript: duas fontes para um
+      dado só, que precisaram de um conferidor dedicado para não divergirem.
+      Aqui uma peça a mais é um dia a mais, e não há como discordarem.
+
+   2. Existe MODO. O original só sabia fazer "estreia + deslocamento semanal"
+      — o ritmo de quem lança uma marca de conteúdo e publica ter/qui/sáb.
+      Isso é estruturalmente errado para negócio sazonal: parque, hotel,
+      escola, agrícola, varejo de data. Nesses, o conteúdo não tem ritmo
+      próprio, tem JANELAS — e a mesma peça vale cinco vezes mais na semana
+      certa e vira ruído na errada.
+
+        MODO = "cadencia"  → OFFSETS + SEMANAS a partir de uma data
+        MODO = "ancoras"   → JANELAS com datas próprias
+
+      Os dois desembocam na mesma função `janelas()`, então a renderização,
+      o marcador de hoje e o estado de publicado são um código só.
+
+   O que continua igual porque continua certo: data que vence sem desfecho
    registrado é o defeito que nenhuma conferência de qualidade pega. O
    rastreador não reprova por atraso — reprova por silêncio.
    ========================================================================= */
@@ -2471,15 +2569,29 @@ a{color:inherit}
 
   const DIA_MS = 86400000;
 
-  /* Deslocamento de cada publicação dentro da semana, a partir da estreia.
-     [0,2,4] = ter/qui/sáb se a estreia cair numa terça. Vazio enquanto o
-     bloco 6 da entrevista não fechar a frequência. */
-  const OFFSETS = [];      /* [QUAIS DIAS DA SEMANA] */
-  const SEMANAS = 0;       /* [QUANTAS SEMANAS] */
+  /* ---- qual modo esta marca usa ---- */
+  const MODO = "";          /* [CADÊNCIA OU ÂNCORAS] → "cadencia" | "ancoras" */
 
-  const caixa   = document.getElementById("rastreador");
-  const campo   = document.getElementById("campo-estreia");
-  const limpar  = document.getElementById("redefinir-estreia");
+  /* ---- modo cadência: ritmo fixo a partir da data de referência ----
+     [0,2,4] = ter/qui/sáb se a referência cair numa terça. */
+  const OFFSETS = [];       /* [QUAIS DIAS DA SEMANA] */
+  const SEMANAS = 0;        /* [QUANTAS SEMANAS] */
+
+  /* ---- modo âncoras: janelas nomeadas, com datas próprias ----
+     Uma janela pode ter três dias (um feriado) ou seis semanas (férias).
+     `pecas` são índices na constante PECAS da página Produção.
+
+       { nome:"[NOME DA JANELA]", de:"2026-07-01", ate:"2026-07-31",
+         vende:"[O QUE ESTA JANELA PRECISA VENDER]", pecas:[0,1,2] }
+
+     Se já existe calendário comercial em algum sistema, isto deve DERIVAR
+     dele. Redigitar temporada à mão é como o balcão acaba cobrando uma
+     tabela e o site cobrando outra no mesmo feriado. */
+  const JANELAS = [];       /* [AS JANELAS DO PERÍODO] */
+
+  const caixa  = document.getElementById("rastreador");
+  const campo  = document.getElementById("campo-estreia");
+  const limpar = document.getElementById("redefinir-estreia");
   if (!caixa || !campo) return;
 
   const sohDia = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -2495,17 +2607,59 @@ a{color:inherit}
   const cores = { tinta:"var(--tinta)", papel:"var(--papel)",
                   marcador:"var(--marcador)", carimbo:"var(--carimbo)" };
 
-  /* índice i → data. Passa uma semana a cada OFFSETS.length publicações. */
-  function dataDe(estreia, i){
-    if (!OFFSETS.length) return null;
-    return somar(estreia, Math.floor(i / OFFSETS.length) * 7 + OFFSETS[i % OFFSETS.length]);
-  }
-
-  const estreiaSalva = () => {
+  const refSalva = () => {
     const s = window.CENTRAL.estado.obter("estreia", "");
     return s ? deIso(s) : null;
   };
   const publicado = i => window.CENTRAL.estado.obter("pub:" + i, false);
+
+  /* -----------------------------------------------------------------------
+     A normalização: os dois modos viram a MESMA lista de janelas, e cada
+     janela carrega itens { i, data }. `data` é null quando a janela dá
+     periodo mas não dia — o que é o caso normal em âncoras.
+     ----------------------------------------------------------------------- */
+  function montarJanelas(){
+    const lista = pecas();
+
+    if (MODO === "cadencia"){
+      const ref = refSalva();
+      if (!ref || !OFFSETS.length || !SEMANAS) return null;
+      const saida = [];
+      for (let s = 0; s < SEMANAS; s++){
+        const itens = [];
+        for (let k = 0; k < OFFSETS.length; k++){
+          const i = s * OFFSETS.length + k;
+          if (i >= lista.length) break;
+          itens.push({ i, data: somar(ref, s * 7 + OFFSETS[k]) });
+        }
+        if (!itens.length) continue;
+        saida.push({
+          nome: "Semana " + (s + 1),
+          vende: "",
+          de: itens[0].data,
+          ate: itens[itens.length - 1].data,
+          itens,
+        });
+      }
+      return saida;
+    }
+
+    if (MODO === "ancoras"){
+      if (!JANELAS.length) return null;
+      return JANELAS.map(j => ({
+        nome: j.nome,
+        vende: j.vende || "",
+        de: j.de ? deIso(j.de) : null,
+        ate: j.ate ? deIso(j.ate) : null,
+        /* peça pode trazer data própria dentro da janela; se não trouxer,
+           ela pertence ao período e não a um dia */
+        itens: (j.pecas || []).filter(i => i < lista.length)
+                 .map(i => ({ i, data: (lista[i] && lista[i].data) ? deIso(lista[i].data) : null })),
+      })).filter(j => j.itens.length);
+    }
+
+    return null;
+  }
 
   function vazio(motivo){
     caixa.innerHTML = "";
@@ -2517,22 +2671,29 @@ a{color:inherit}
     caixa.appendChild(d);
   }
 
+  function porQueVazio(){
+    if (!pecas().length)
+      return "O rastreador precisa das peças primeiro: preencha a constante PECAS "
+           + "na página Produção. É o bloco 6 da entrevista.";
+    if (MODO !== "cadencia" && MODO !== "ancoras")
+      return "Escolha o modo no script desta página. MODO = \"cadencia\" para ritmo "
+           + "fixo a partir de uma data; MODO = \"ancoras\" para negócio sazonal, "
+           + "em que o conteúdo se subordina a um calendário comercial.";
+    if (MODO === "cadencia" && (!OFFSETS.length || !SEMANAS))
+      return "Modo cadência escolhido: preencha OFFSETS (quais dias da semana) e "
+           + "SEMANAS (quantas) no script desta página.";
+    if (MODO === "cadencia" && !refSalva())
+      return "Escolha a data de referência acima para o rastreador começar.";
+    if (MODO === "ancoras" && !JANELAS.length)
+      return "Modo âncoras escolhido: preencha JANELAS no script desta página — "
+           + "nome, período e quais peças caem em cada uma.";
+    return "Faltam dados para montar o rastreador.";
+  }
+
   function montar(){
     const lista = pecas();
-
-    if (!lista.length || !OFFSETS.length || !SEMANAS){
-      vazio("O rastreador liga sozinho quando três coisas existirem: as peças na "
-          + "constante PECAS da página Produção, a frequência em OFFSETS e a "
-          + "quantidade de semanas em SEMANAS — as duas últimas no script desta "
-          + "página. É o bloco 6 da entrevista.");
-      return;
-    }
-
-    const estreia = estreiaSalva();
-    if (!estreia){
-      vazio("Escolha a data de estreia acima para o rastreador começar.");
-      return;
-    }
+    const grupos = montarJanelas();
+    if (!grupos || !grupos.length){ vazio(porQueVazio()); return; }
 
     const hoje = sohDia(new Date());
     caixa.innerHTML = "";
@@ -2540,13 +2701,13 @@ a{color:inherit}
     const ativo = document.createElement("div");
     ativo.className = "rastreador-ativo";
 
-    /* os marcos: em que semana está, o que sai hoje, o que vem a seguir */
-    const total    = lista.length;
-    const feitos   = lista.filter((_, i) => publicado(i)).length;
-    const proximo  = lista.findIndex((_, i) => !publicado(i) &&
-                       dataDe(estreia, i) && dataDe(estreia, i) >= hoje);
-    const semanaAt = Math.min(SEMANAS,
-                       Math.floor((hoje - sohDia(estreia)) / (7 * DIA_MS)) + 1);
+    /* ---- os marcos ---- */
+    const todosItens = grupos.reduce((s, g) => s.concat(g.itens), []);
+    const feitos = todosItens.filter(x => publicado(x.i)).length;
+    const total  = todosItens.length;
+
+    const agora = grupos.find(g => g.de && g.ate && hoje >= g.de && hoje <= g.ate);
+    const proximo = todosItens.find(x => !publicado(x.i) && (!x.data || x.data >= hoje));
 
     const marco = document.createElement("dl");
     marco.className = "marco";
@@ -2558,53 +2719,56 @@ a{color:inherit}
       d.appendChild(dt); d.appendChild(dd); return d;
     };
     marco.appendChild(cel("Onde você está",
-      hoje < sohDia(estreia) ? "antes da estreia" : "semana " + semanaAt + " de " + SEMANAS,
-      "estreia em " + curto(estreia)));
+      agora ? agora.nome : "fora de janela",
+      agora ? (agora.vende || (curto(agora.de) + " – " + curto(agora.ate)))
+            : "nenhuma janela cobre hoje"));
     marco.appendChild(cel("Publicado", feitos + " de " + total,
-      total - feitos + " restando"));
+      (total - feitos) + " restando"));
     marco.appendChild(cel("Próxima",
-      proximo >= 0 ? lista[proximo].nome : "—",
-      proximo >= 0 ? curto(dataDe(estreia, proximo)) : "nada programado à frente"));
+      proximo ? lista[proximo.i].nome : "—",
+      proximo ? (proximo.data ? curto(proximo.data) : "sem dia marcado")
+              : "nada programado à frente"));
     ativo.appendChild(marco);
 
-    /* as semanas, com um dia por peça */
-    for (let s = 0; s < SEMANAS; s++){
-      const doBloco = [];
-      for (let k = 0; k < OFFSETS.length; k++){
-        const i = s * OFFSETS.length + k;
-        if (i < lista.length) doBloco.push(i);
-      }
-      if (!doBloco.length) continue;
-
+    /* ---- as janelas ---- */
+    grupos.forEach(g => {
       const bloco = document.createElement("div");
       bloco.className = "semana";
+
       const topo = document.createElement("div");
       topo.className = "semana-topo";
-      const b = document.createElement("b"); b.textContent = "Semana " + (s + 1);
+      const b = document.createElement("b"); b.textContent = g.nome;
+      topo.appendChild(b);
+      if (g.vende){
+        const v = document.createElement("span");
+        v.style.cssText = "font-size:12px;color:var(--miudo)";
+        v.textContent = g.vende;
+        topo.appendChild(v);
+      }
       const em = document.createElement("em");
-      em.textContent = curto(dataDe(estreia, doBloco[0])) + " – " +
-                       curto(dataDe(estreia, doBloco[doBloco.length - 1]));
-      topo.appendChild(b); topo.appendChild(em);
+      em.textContent = g.de && g.ate ? curto(g.de) + " – " + curto(g.ate) : "sem período";
+      topo.appendChild(em);
       bloco.appendChild(topo);
 
-      doBloco.forEach(i => {
+      g.itens.forEach(({ i, data }) => {
         const p = lista[i];
-        const data = dataDe(estreia, i);
-        const feito = publicado(i);
-        const ehHoje = data.getTime() === hoje.getTime();
+        const feito  = publicado(i);
+        const ehHoje = data && data.getTime() === hoje.getTime();
 
         const dia = document.createElement("div");
         dia.className = "dia";
         dia.dataset.publicado = feito ? "1" : "0";
         dia.dataset.estado = feito ? "publicado" : ehHoje ? "hoje"
-                           : data < hoje ? "atrasado" : "futuro";
+                           : (data && data < hoje) ? "atrasado" : "futuro";
 
         const quando = document.createElement("div");
         quando.className = "quando";
-        quando.textContent = diaSem(data);
-        const dt = document.createElement("span");
-        dt.className = "data"; dt.textContent = curto(data);
-        quando.appendChild(dt);
+        quando.textContent = data ? diaSem(data) : "—";
+        if (data){
+          const dt = document.createElement("span");
+          dt.className = "data"; dt.textContent = curto(data);
+          quando.appendChild(dt);
+        }
         if (ehHoje){
           const selo = document.createElement("span");
           selo.className = "selo-hoje"; selo.textContent = "hoje";
@@ -2641,11 +2805,11 @@ a{color:inherit}
       });
 
       ativo.appendChild(bloco);
-    }
+    });
 
     const pe = document.createElement("div");
     pe.className = "rastreador-pe";
-    pe.innerHTML = "<span>salvo neste navegador</span>" +
+    pe.innerHTML = "<span>modo " + MODO + " · salvo neste navegador</span>" +
       (window.CENTRAL.estado.persistente() ? "" : "<span>armazenamento bloqueado — some ao fechar</span>");
     ativo.appendChild(pe);
 
@@ -2653,7 +2817,13 @@ a{color:inherit}
   }
 
   function iniciar(){
-    const salva = estreiaSalva();
+    /* o campo de data só serve ao modo cadência: em âncoras as datas são
+       absolutas e vêm de JANELAS, então pedir uma "data de referência"
+       sugeriria que ela muda alguma coisa */
+    const campos = campo.closest(".campos");
+    if (MODO === "ancoras" && campos) campos.hidden = true;
+
+    const salva = refSalva();
     if (salva) campo.value = iso(salva);
     campo.addEventListener("change", () => {
       if (campo.value) window.CENTRAL.estado.definir("estreia", campo.value);
