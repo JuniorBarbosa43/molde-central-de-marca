@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "molde",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["servidor.js"],
+      "port": 4180,
+      "autoPort": true
+    }
+  ]
+}

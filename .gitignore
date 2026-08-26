@@ -1,0 +1,7 @@
+node_modules/
+_estado-entrevista.json
+
+# o material cru do autor nao entra no molde generico —
+# so a estrutura das pastas, pelos .gitkeep
+_entrada/*/*
+!_entrada/*/.gitkeep

@@ -1,0 +1,2673 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>[NOME DA MARCA] · Central da Marca</title>
+
+<style>
+/* =========================================================================
+   [NOME DA MARCA] · CENTRAL DA MARCA
+   -------------------------------------------------------------------------
+   Molde. Todo valor abaixo é neutro DE PROPÓSITO — cinza não é escolha de
+   design, é slot vazio. Quem preenche isto é o bloco 1 da entrevista.
+
+   A biblioteca de componentes que vem depois deste bloco é a resolução de
+   11 colisões de classe auditadas na central de origem. Não redefina
+   componente dentro de página: mexa aqui.
+   ========================================================================= */
+
+:root{
+  /* ---- cores da marca ----------------------------------------------------
+     Quatro papéis, não quatro cores bonitas. Cada uma responde uma pergunta:
+
+       --papel     [COR DE FUNDO CLARO]     onde o texto descansa
+       --tinta     [COR DE TEXTO ESCURO]    o que se lê
+       --marcador  [COR DE DESTAQUE]        o gesto que aponta. UMA só.
+       --carimbo   [COR DE ALERTA]          risco, erro, "não faça"
+       --fibra     [COR DE SUPERFÍCIE]      papel um tom acima, para cartão
+       --cinza     [COR NEUTRA DE APOIO]    moldura, borda, coisa desligada
+
+     REGRA QUE NÃO É NEGOCIÁVEL: --tinta sobre --papel precisa passar em
+     4,5:1 (WCAG AA). O conferidor de contraste mede isso e reprova.
+     -------------------------------------------------------------------- */
+  --papel:#EDEDEA;
+  --tinta:#141414;
+  --marcador:#C9C9C4;
+  --carimbo:#8A8A85;
+  --fibra:#F5F5F2;
+  --cinza:#A8A8A3;
+
+  /* fundo de peça em tom mais fundo que --tinta, para miniatura sobre claro */
+  --tinta-fundo:#0B0B0B;
+
+  /* Derivados do marcador. Existem para que trocar --marcador troque TUDO:
+     na central de origem havia 35 rgba() do amarelo escritos à mão, e cada um
+     era um lugar onde a marca antiga sobreviveria a uma troca de paleta. */
+  --marcador-forte:color-mix(in srgb, var(--marcador) 14%, transparent);
+  --marcador-suave:color-mix(in srgb, var(--marcador) 12%, transparent);
+  --tinta-60:color-mix(in srgb, var(--tinta) 60%, transparent);
+  --papel-55:color-mix(in srgb, var(--papel) 55%, transparent);
+  --papel-50:color-mix(in srgb, var(--papel) 50%, transparent);
+
+  /* ---- tokens semânticos (redefinidos por tema) ----
+     --miudo e --acento são cores de TEXTO DE INTERFACE e precisam passar em
+     AA sobre a superfície mais escura em que aparecem: o fundo com a
+     sobreposição .caixa. Não confunda --acento com --carimbo: o primeiro é
+     interface, o segundo é cor de marca e não muda com o tema. */
+  --ground:#EDEDEA;
+  --texto:#141414;
+  --miudo:#5E5E59;
+  --acento:#3A3A36;
+  --linha:rgba(20,20,20,.28);
+  --linha-fraca:rgba(20,20,20,.14);
+  --caixa:rgba(20,20,20,.05);
+  --espinha:#141414;
+  --espinha-txt:#EDEDEA;
+  --espinha-miudo:#8C8C87;
+
+  /* superfícies da espinha (navegação escura). Ficam em token porque a
+     espinha pode ser clara numa marca clara, e aí rgba branco some. */
+  --espinha-realce:rgba(255,255,255,.06);
+  --espinha-realce-forte:rgba(255,255,255,.07);
+  --espinha-borda:rgba(255,255,255,.18);
+  --espinha-borda-fraca:rgba(255,255,255,.14);
+  --espinha-borda-media:rgba(255,255,255,.3);
+  --espinha-borda-viva:rgba(255,255,255,.45);
+  --espinha-realce-fraco:rgba(255,255,255,.04);
+  --espinha-borda-sutil:rgba(255,255,255,.2);
+  --espinha-borda-clara:rgba(255,255,255,.6);
+
+  /* ---- tipografia --------------------------------------------------------
+     --display  [FONTE DE TÍTULO]  a que carrega a personalidade
+     --mono     [FONTE DE APOIO]   a que carrega ficha técnica e legenda
+
+     ANTES DE ESCOLHER, LEIA: a arte exportada embute a fonte em base64
+     DENTRO do SVG, porque o export de PNG desenha a partir de um blob e blob
+     não enxerga o @font-face da página. Sem direito de embutir, o PNG sai na
+     fonte de fallback e ninguém percebe até o post estar publicado.
+     Confira a licença ANTES de fechar a tipografia. É o bloco 1 da entrevista.
+
+     A cadeia de fallback abaixo não é enfeite: ela é o que aparece enquanto a
+     fonte real não existe, e enquanto ela não existir a central mente menos
+     se estiver visivelmente sem fonte de marca. */
+  --display:[FONTE DE TÍTULO],Impact,Haettenschweiler,"Arial Narrow Bold","Arial Black",sans-serif;
+  --mono:[FONTE DE APOIO],ui-monospace,Consolas,"DejaVu Sans Mono",monospace;
+
+  --nav-larg:250px;
+  --medida:66ch;
+}
+
+@media (prefers-color-scheme:dark){
+  :root{
+    --ground:#131312; --texto:#E4E4E0; --miudo:#8E8E88; --acento:#B6B6B0;
+    --linha:rgba(228,228,224,.26); --linha-fraca:rgba(228,228,224,.12);
+    --caixa:rgba(228,228,224,.05);
+    --espinha:#0B0B0A; --espinha-txt:#E4E4E0; --espinha-miudo:#8A8A84;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#131312; --texto:#E4E4E0; --miudo:#8E8E88; --acento:#B6B6B0;
+  --linha:rgba(228,228,224,.26); --linha-fraca:rgba(228,228,224,.12);
+  --caixa:rgba(228,228,224,.05);
+  --espinha:#0B0B0A; --espinha-txt:#E4E4E0; --espinha-miudo:#8A8A84;
+}
+:root[data-theme="light"]{
+  --ground:#EDEDEA; --texto:#141414; --miudo:#5E5E59; --acento:#3A3A36;
+  --linha:rgba(20,20,20,.28); --linha-fraca:rgba(20,20,20,.14);
+  --caixa:rgba(20,20,20,.05);
+  --espinha:#141414; --espinha-txt:#EDEDEA; --espinha-miudo:#8C8C87;
+}
+
+/* ---- colchete: o slot que ainda não foi respondido ----------------------
+   Todo lugar por preencher nesta central é um [TEXTO EM MAIÚSCULAS]. O
+   contador da home acha por expressão regular e o realce abaixo torna
+   impossível publicar sem ver. Não estilize para ficar discreto. */
+.colchete{
+  background:repeating-linear-gradient(135deg,
+             var(--caixa) 0 6px, transparent 6px 12px);
+  outline:1px dashed var(--linha);
+  color:var(--miudo);
+  font-family:var(--mono);
+  font-size:.92em;
+  padding:0 .25em;
+  border-radius:2px;
+}
+
+
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--texto);
+  font-family:var(--mono);
+  font-size:15px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* =========================================================================
+   ESQUELETO
+   ========================================================================= */
+
+.app{display:grid;grid-template-columns:var(--nav-larg) 1fr;min-height:100vh}
+
+/* ---- espinha (navegação) ---- */
+.espinha{
+  background:var(--espinha);
+  color:var(--espinha-txt);
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:1.5rem;
+  padding:1.5rem 0 2rem;
+}
+.espinha-marca{
+  display:flex;align-items:center;gap:.6rem;
+  padding:0 1.1rem;text-decoration:none;color:inherit;
+}
+.espinha-marca svg{width:30px;height:30px;color:var(--marcador);flex:none}
+.fechar-gaveta{
+  display:none;position:absolute;top:1.1rem;right:.9rem;z-index:2;
+  background:transparent;border:1px solid var(--espinha-borda-media);color:var(--espinha-txt);
+  font-family:var(--mono);font-size:15px;line-height:1;padding:.25rem .5rem;cursor:pointer;
+}
+.fechar-gaveta:hover{border-color:var(--espinha-borda-clara)}
+.espinha-marca b{font-family:var(--display);font-size:1.65rem;line-height:.9;
+                 letter-spacing:.01em;font-weight:400}
+.espinha-marca span{display:block;font-size:9px;letter-spacing:.14em;
+                    text-transform:uppercase;color:var(--espinha-miudo);margin-top:.15rem}
+
+.menu{display:flex;flex-direction:column;gap:1px;list-style:none;margin:0;padding:0}
+.menu a{
+  display:grid;grid-template-columns:22px 1fr;gap:.6rem;align-items:baseline;
+  padding:.5rem 1.1rem;text-decoration:none;color:var(--espinha-txt);
+  font-size:13px;line-height:1.35;border-left:3px solid transparent;
+}
+.menu a .n{font-family:var(--display);font-size:.95rem;color:var(--espinha-miudo)}
+.menu a:hover{background:var(--espinha-realce)}
+.menu a[aria-current="page"]{
+  background:var(--marcador-forte);border-left-color:var(--marcador);font-weight:700;
+}
+.menu a[aria-current="page"] .n{color:var(--marcador)}
+
+.subnav{display:flex;flex-direction:column;gap:0;list-style:none;margin:0;padding:0 1.1rem}
+.subnav-tit{font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+            color:var(--espinha-miudo);padding:0 1.1rem;margin-bottom:.4rem}
+.subnav a{
+  display:block;padding:.24rem 0 .24rem .7rem;text-decoration:none;
+  color:var(--espinha-miudo);font-size:11.5px;line-height:1.4;
+  border-left:1px solid var(--espinha-borda-fraca);
+}
+.subnav a:hover{color:var(--espinha-txt)}
+.subnav a.ativo{color:var(--marcador);border-left-color:var(--marcador)}
+
+/* ---- busca ---- */
+.busca-caixa{padding:0 1.1rem}
+.busca-campo{
+  width:100%;font-family:var(--mono);font-size:12px;
+  background:var(--espinha-realce-forte);color:var(--espinha-txt);
+  border:1px solid var(--espinha-borda);padding:.45rem .6rem;
+}
+.busca-campo::placeholder{color:var(--espinha-miudo)}
+.busca-campo:focus{border-color:var(--marcador);outline:none}
+.busca-info{font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+            color:var(--espinha-miudo);margin:.4rem 0 0}
+
+.resultados{list-style:none;margin:0;padding:0 1.1rem;display:flex;flex-direction:column;gap:1px}
+.resultados li a{
+  display:block;padding:.5rem .6rem;text-decoration:none;color:var(--espinha-txt);
+  background:var(--espinha-realce-fraco);border-left:3px solid transparent;
+}
+.resultados li a:hover,.resultados li a:focus-visible{
+  background:var(--marcador-suave);border-left-color:var(--marcador)}
+.resultados .onde{font-size:9px;letter-spacing:.12em;text-transform:uppercase;
+                  color:var(--espinha-miudo);display:block}
+.resultados .oque{font-size:12px;font-weight:700;line-height:1.3;display:block;margin:.1rem 0}
+.resultados .trecho{font-size:10.5px;line-height:1.4;color:var(--espinha-miudo);display:block}
+.resultados mark{background:var(--marcador);color:var(--tinta);padding:0 .1em}
+.vazio{padding:0 1.1rem;font-size:11px;color:var(--espinha-miudo);line-height:1.5}
+
+.espinha-pe{margin-top:auto;padding:0 1.1rem;display:flex;flex-direction:column;gap:.6rem}
+.tema-btn{
+  font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  background:transparent;color:var(--espinha-miudo);border:1px solid var(--espinha-borda-sutil);
+  padding:.4rem .6rem;cursor:pointer;text-align:left;
+}
+.tema-btn:hover{color:var(--espinha-txt);border-color:var(--espinha-borda-viva)}
+
+/* ---- barra mobile ---- */
+.barra{display:none}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .barra{
+    display:flex;align-items:center;gap:.7rem;position:sticky;top:0;z-index:30;
+    background:var(--espinha);color:var(--espinha-txt);padding:.6rem .9rem;
+  }
+  .barra svg{width:24px;height:24px;color:var(--marcador)}
+  .barra b{font-family:var(--display);font-size:1.25rem;font-weight:400;line-height:1}
+  .barra .atual{font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+                color:var(--espinha-miudo);margin-left:auto;text-align:right}
+  .gaveta-btn{
+    background:transparent;border:1px solid var(--espinha-borda-media);color:inherit;
+    font-family:var(--mono);font-size:16px;line-height:1;padding:.3rem .5rem;cursor:pointer;
+  }
+  .espinha{
+    position:fixed;inset:0 auto 0 0;width:min(84vw,300px);z-index:40;
+    transform:translateX(-100%);transition:transform .18s ease;
+  }
+  .espinha[data-aberta="true"]{transform:translateX(0)}
+  /* aberta, a gaveta cobre o ☰ da barra — precisa do próprio fechar */
+  .fechar-gaveta{display:block}
+  .veu{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:35;border:0;padding:0}
+  .veu[hidden]{display:none}
+}
+@media (prefers-reduced-motion:reduce){ .espinha{transition:none} }
+
+/* =========================================================================
+   BIBLIOTECA DE COMPONENTES
+   Nome único por componente. Onde dois documentos usavam o mesmo nome para
+   coisas diferentes, os dois foram renomeados para o que realmente são.
+   ========================================================================= */
+
+/* ---- página e seção ---- */
+/* min-width:0 é obrigatório: como item de grid, o padrão min-width:auto impede
+   o <main> de encolher abaixo da largura mínima do conteúdo — e aí um painel
+   de duas colunas lá dentro estica a página inteira além da janela */
+.palco{padding:3rem 2rem 6rem;display:flex;justify-content:center;min-width:0}
+@media (max-width:860px){ .palco{padding:2rem 1.1rem 4rem} }
+
+.pagina{width:100%;max-width:840px;display:flex;flex-direction:column;gap:3rem}
+.pagina[hidden]{display:none}
+
+/* NÃO animar a entrada da página.
+   Tentei uma transição de opacidade aqui e o resultado foi página invisível:
+   sem composição de quadros — aba em segundo plano, iframe recém-criado,
+   economia de energia — o navegador aplica o primeiro quadro (opacity 0) e a
+   animação nunca avança. Omitir o fill-mode não resolve, porque o problema é
+   o estado inicial, não o final. Uma transição bonita não vale o risco de a
+   página não aparecer. */
+
+.sec{display:flex;flex-direction:column;gap:1.25rem;padding-top:2.5rem;
+     border-top:2px dashed var(--linha)}
+.sec:first-of-type{border-top:0;padding-top:0}
+
+.cab{display:flex;align-items:baseline;gap:.9rem;margin:0;scroll-margin-top:5rem}
+/* o número é bloco de marca-texto com tinta por cima: 14,46:1 e é o próprio
+   gesto da marca. antes era amarelo vazado com -webkit-text-stroke — se o
+   contorno não pintasse, sobrava amarelo sobre creme a 1,03:1, ilegível. */
+.cab .n{font-family:var(--display);font-size:1.75rem;line-height:1;color:var(--tinta);
+        background:var(--marcador);padding:.12em .3em .06em;flex:none;
+        align-self:center}
+.cab .tit{font-family:var(--display);font-size:clamp(1.3rem,4.2vw,1.9rem);line-height:.95;
+          text-transform:uppercase;font-weight:400}
+.cab.simples .tit{font-family:var(--mono);font-size:13px;font-weight:700;
+                  letter-spacing:.22em;text-transform:uppercase}
+
+h3{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+   margin:0;color:var(--miudo)}
+
+.bloco{display:flex;flex-direction:column;gap:.6rem}
+p{margin:0;max-width:var(--medida)}
+.lede{font-size:1.15rem;line-height:1.45;max-width:32ch}
+
+/* ---- texto ---- */
+.mark{background:var(--marcador);color:var(--tinta);padding:0 .2em;font-weight:700;
+      box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.micro{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--miudo);
+       line-height:1.5;margin:0}
+/* último resquício de -webkit-text-stroke removido. o asterisco das manchetes
+   vira marca-texto igual aos números; na espinha escura o amarelo puro já lê. */
+.ast{color:var(--tinta);background:var(--marcador);padding:0 .06em;
+     border-radius:1px}
+.espinha-marca .ast,.barra .ast{background:none;color:var(--marcador);padding:0}
+
+/* ---- callouts: vermelho é risco, amarelo é direção ---- */
+.aviso{border-left:4px solid var(--acento);padding:.15rem 0 .15rem .9rem;
+       font-size:13.5px;line-height:1.55;max-width:64ch}
+.nota{border-left:4px solid var(--marcador);padding:.15rem 0 .15rem .9rem;
+      font-size:13.5px;line-height:1.55;max-width:64ch}
+
+/* ---- dados ---- */
+.ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:1px;
+       background:var(--linha);border:1px solid var(--linha)}
+.ficha > div{background:var(--ground);padding:.6rem .7rem;display:flex;
+             flex-direction:column;gap:.15rem}
+.ficha dt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--miudo)}
+.ficha dd{margin:0;font-size:12.5px;line-height:1.35;font-weight:700}
+
+/* A COLEÇÃO. As capas são SVG do próprio motor, sem o bloco de fontes: dentro
+   desta página elas usam a Archivo Black que a central já carrega. Sete das
+   doze capas estáticas são só manchete em Archivo; as cinco que têm corpo de
+   texto caem em Courier New, que é a substituta que esta central já assumiu
+   quando decidiu não embutir a Courier Prime por 135 KB. */
+.galeria-capas{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));
+               gap:1px;background:var(--linha);border:1px solid var(--linha)}
+.capa-item{background:var(--ground);display:flex;flex-direction:column;
+           border:0;padding:0;cursor:pointer;text-align:left;font-family:var(--mono);
+           color:var(--texto);text-decoration:none}
+.capa-item:hover{background:var(--caixa)}
+/* CAIXA DE PROPORÇÃO FIXA, e não altura livre. As doze peças estáticas são
+   1080 × 1350 e os dois Reels são 1080 × 1920: soltas, as duas cartas de vídeo
+   ficariam 42% mais altas e a grade quebrava. Com a caixa em 4:5 e o
+   preserveAspectRatio padrão do SVG, o Reels entra centrado e com tarja — que
+   é o que ele é, um formato diferente, e não uma peça torta. */
+.capa-item svg{display:block;width:100%;height:100%}
+.capa-item{aspect-ratio:auto}
+.capa-item > svg{aspect-ratio:4/5;object-fit:contain;background:var(--caixa)}
+.capa-item.reels > svg{background:var(--tinta-fundo)}
+.capa-pe{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;
+         padding:.5rem .6rem;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+         color:var(--miudo)}
+.capa-item:hover .capa-pe{color:var(--texto)}
+.capa-pe .n{font-weight:700;color:var(--acento)}
+
+.abre-peca{display:inline-flex;align-items:center;gap:.4rem;margin:.55rem 0 0;
+           font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+           text-transform:uppercase;color:var(--acento);text-decoration:none;
+           border-bottom:1px solid transparent}
+.abre-peca:hover{border-bottom-color:var(--acento)}
+.abre-peca .seta{font-size:13px;line-height:1}
+
+.specs{display:flex;flex-direction:column;gap:.3rem;max-width:var(--medida)}
+.specs > div{display:flex;justify-content:space-between;gap:1rem;font-size:13.5px;
+             border-bottom:1px dotted var(--linha);padding-bottom:.3rem}
+.specs > div > :last-child{color:var(--miudo);text-align:right}
+
+.lista{display:flex;flex-direction:column;gap:.4rem;max-width:var(--medida)}
+.lista > div{display:grid;grid-template-columns:auto 1fr;gap:.85rem;align-items:baseline;
+             border-bottom:1px dotted var(--linha);padding-bottom:.4rem;
+             font-size:13.5px;line-height:1.5}
+/* o asterisco de bullet fica em tinta: amarelo puro sobre creme não lê */
+.lista > div::before{content:"✱";color:var(--texto);opacity:.75}
+.lista.num{counter-reset:l}
+.lista.num > div::before{counter-increment:l;content:counter(l,decimal-leading-zero);
+  font-family:var(--display);font-size:1.05rem;color:var(--acento)}
+
+.campos{display:flex;flex-direction:column;gap:.35rem;max-width:var(--medida)}
+.campos > div{display:grid;grid-template-columns:130px 1fr;gap:.9rem;font-size:13.5px;
+              border-bottom:1px dotted var(--linha);padding-bottom:.35rem;line-height:1.5}
+.campos dt{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--miudo)}
+.campos dd{margin:0}
+@media (max-width:560px){ .campos > div{grid-template-columns:1fr;gap:.15rem} }
+
+/* ---- caixa de texto literal (legendas, textos de arte, bio) ---- */
+.caixa{border:1px solid var(--linha);background:var(--caixa);padding:1rem 1.1rem;
+       font-size:14px;line-height:1.6;white-space:pre-wrap;max-width:56ch}
+
+/* ---- slides de post e roteiros de vídeo ---- */
+.slides{display:flex;flex-direction:column;gap:.5rem;counter-reset:sl}
+.slide{display:grid;grid-template-columns:auto 1fr;gap:.9rem;align-items:start;
+       border-bottom:1px dotted var(--linha);padding-bottom:.7rem}
+.slide::before{counter-increment:sl;content:counter(sl);font-family:var(--display);
+               font-size:1.35rem;line-height:1.25;color:var(--miudo);min-width:1.1em}
+.slide .conteudo{display:flex;flex-direction:column;gap:.3rem}
+.slide .capa-txt{font-family:var(--display);font-size:clamp(1.15rem,4vw,1.6rem);
+                 line-height:1;text-transform:uppercase}
+.slide .corpo{font-size:14.5px;line-height:1.55}
+.slide .dir{font-size:11.5px;color:var(--miudo);line-height:1.45}
+.slide.antidoto{border-left:4px solid var(--marcador);padding-left:.8rem;background:var(--caixa)}
+.slide.antidoto .rotulo{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+
+.roteiro{display:flex;flex-direction:column;gap:.5rem}
+.corte{display:grid;grid-template-columns:78px 1fr;gap:.9rem;align-items:start;
+       border-bottom:1px dotted var(--linha);padding-bottom:.7rem}
+.corte .tc{font-size:11px;letter-spacing:.1em;color:var(--acento);font-weight:700;
+           font-variant-numeric:tabular-nums;padding-top:.2rem}
+.corte .fala{display:flex;flex-direction:column;gap:.25rem}
+.corte .dito{font-size:14.5px;line-height:1.55}
+.corte .tela{font-size:11.5px;color:var(--miudo);line-height:1.45}
+.corte.gancho{border-left:4px solid var(--acento);padding-left:.8rem;background:var(--caixa)}
+
+/* ---- artigos de peça (as 13 peças de produção) ---- */
+.peca{display:flex;flex-direction:column;gap:1.25rem;padding-top:2.5rem;
+      border-top:2px dashed var(--linha)}
+/* display:flex vence o display:none implícito do atributo hidden — sem esta
+   linha as peças "escondidas" continuam desenhando na tela */
+.peca[hidden]{display:none}
+.peca-titulo{display:flex;align-items:baseline;gap:.9rem;margin:0;scroll-margin-top:5rem}
+.peca-titulo .n{font-family:var(--display);font-size:1.8rem;line-height:1;color:var(--tinta);
+                background:var(--marcador);padding:.12em .3em .06em;flex:none;align-self:center}
+.peca-titulo .nome{font-family:var(--display);font-size:clamp(1.4rem,4.5vw,2rem);
+                   line-height:.95;text-transform:uppercase;font-weight:400}
+
+/* ---- superfícies visuais ---- */
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1rem}
+
+/* mockup de post, proporção 4:5 */
+.mock{aspect-ratio:4/5;padding:1.1rem;display:flex;flex-direction:column;
+      justify-content:space-between;gap:.8rem;overflow:hidden;position:relative}
+.mock-tinta{background:var(--tinta);color:var(--papel)}
+.mock-papel{background:var(--papel);color:var(--tinta)}
+.mock-marcador{background:var(--marcador);color:var(--tinta)}
+
+/* miniatura quadrada da grade do perfil */
+.grid-tile{aspect-ratio:1;display:grid;place-items:center;padding:.4rem;text-align:center;
+           font-size:8.5px;line-height:1.2;letter-spacing:.04em;text-transform:uppercase}
+
+.swatch{width:14px;height:44px;border:1px solid var(--linha)}
+.chip{height:46px;border:1px solid var(--linha)}
+
+/* internos do mockup — compartilhados por manual, produção e calendário.
+   Valores em px são só o plano B; o bloco @supports abaixo transforma o
+   mockup num modelo em escala de verdade. */
+.mock .manchete{font-family:var(--display);font-size:clamp(1.15rem,3.4vw,1.5rem);line-height:.95;
+                text-transform:uppercase;text-wrap:balance}
+.mock .corpo{font-size:12px;line-height:1.45}
+.mock .rodape{display:flex;justify-content:space-between;align-items:flex-end;gap:.5rem;
+              font-size:9px;letter-spacing:.06em;opacity:.6}
+.mock .rodape svg{width:15px;height:15px;flex:none}
+.mock .traducao{display:flex;flex-direction:column;gap:.45rem;font-size:11.5px;line-height:1.35}
+.mock .traducao b{display:block}
+.mock .traducao i{font-style:normal;opacity:.62}
+.carimbo-selo{align-self:flex-start;border:2px solid var(--carimbo);color:var(--carimbo);
+              font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+              padding:.2rem .5rem;transform:rotate(-7deg)}
+
+/* MODELO EM ESCALA
+   Com tamanho em px, o mockup mentia sobre a própria hierarquia: o corpo saía
+   a 6,3% da largura quando no post real ocupa 3,5%, e a letra miúda a 4,7%
+   contra 2%. Em unidades de contêiner (1cqw = 1% da largura do mockup) cada
+   elemento reproduz a medida da especificação de 1080 × 1350, em qualquer
+   tamanho de tela. As contas: manchete 108/1080, corpo 38/1080,
+   letra miúda 22/1080, margem 90/1080. */
+@supports (container-type: inline-size){
+  /* O padding NÃO pode usar cqw: um elemento não consulta a si mesmo, então
+     cqw aqui dentro procuraria um contêiner ancestral e cairia na viewport.
+     Porcentagem resolve contra o pai, que tem a mesma largura do mockup. */
+  .mock{container-type:inline-size;padding:8.33%}
+
+  /* E cqw resolve contra a CAIXA DE CONTEÚDO do contêiner, não a largura
+     total. Com margem de 90 px dos dois lados, a área útil do post é 900 px —
+     é sobre ela que as proporções abaixo são calculadas, não sobre os 1080. */
+  .mock .manchete{font-size:12cqw;line-height:.92}      /* 108/900 */
+  .mock .corpo{font-size:4.2cqw;line-height:1.5}        /*  38/900 */
+  .mock .rodape{font-size:2.4cqw;gap:2.4cqw}            /*  22/900 */
+  .mock .rodape svg{width:5cqw;height:5cqw}
+  .mock .traducao{font-size:3.7cqw;gap:1.9cqw}
+  .mock .carimbo-selo{font-size:2.9cqw;padding:1cqw 2cqw;border-width:.6cqw}
+  .mock .mark{padding:0 .12em}
+}
+.legenda-peca{display:flex;flex-direction:column;gap:.15rem}
+.legenda-peca b{font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.legenda-peca span{font-size:11.5px;color:var(--miudo);line-height:1.4}
+
+/* =========================================================================
+   HOME — painel
+   ========================================================================= */
+
+.agora{display:flex;flex-direction:column;gap:1px;background:var(--linha);
+       border:1px solid var(--linha)}
+.tarefa-item{background:var(--ground);display:grid;grid-template-columns:auto 1fr;
+             gap:.85rem;align-items:start;padding:.75rem .9rem;cursor:pointer}
+.tarefa-item:hover{background:var(--caixa)}
+.tarefa-item input{width:17px;height:17px;margin:.15rem 0 0;accent-color:var(--acento);
+                   cursor:pointer;flex:none}
+.tarefa-txt{display:flex;flex-direction:column;gap:.15rem}
+.tarefa-txt b{font-size:14px;line-height:1.35}
+.tarefa-txt span{font-size:12.5px;color:var(--miudo);line-height:1.45}
+.tarefa-item[data-feito="1"] .tarefa-txt b{text-decoration:line-through;color:var(--miudo)}
+
+.agora-pe{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+          flex-wrap:wrap;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+          color:var(--miudo);margin-top:.55rem}
+.barra-progresso{height:6px;background:var(--linha);margin-top:.5rem}
+.barra-progresso i{display:block;height:100%;background:var(--marcador);
+                   transition:width .25s ease}
+@media (prefers-reduced-motion:reduce){ .barra-progresso i{transition:none} }
+
+.atalhos{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1px;
+         background:var(--linha);border:1px solid var(--linha)}
+.atalho{background:var(--ground);padding:.85rem .9rem;text-decoration:none;color:inherit;
+        display:flex;flex-direction:column;gap:.2rem;border-left:3px solid transparent}
+.atalho:hover{background:var(--caixa);border-left-color:var(--marcador)}
+.atalho b{font-size:13px}
+.atalho span{font-size:11.5px;color:var(--miudo);line-height:1.4}
+
+.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:1px;
+         background:var(--linha);border:1px solid var(--linha)}
+.numeros > div{background:var(--ground);padding:.8rem .6rem;text-align:center;
+               display:flex;flex-direction:column;gap:.15rem}
+.numeros b{font-family:var(--display);font-size:1.9rem;line-height:1;font-weight:400}
+.numeros span{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--miudo)}
+
+/* =========================================================================
+   HOME
+   ========================================================================= */
+
+.capa{display:flex;flex-direction:column;gap:1.2rem;border-bottom:2px dashed var(--linha);
+      padding-bottom:2.5rem}
+.capa h1{font-family:var(--display);font-weight:400;text-transform:uppercase;margin:0;
+         font-size:clamp(3rem,12vw,6rem);line-height:.82}
+.capa .desc{font-size:clamp(1rem,3.2vw,1.35rem);letter-spacing:.05em;margin:0}
+.capa .glifo{width:78px;height:78px;color:var(--texto)}
+
+.docs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1px;
+      background:var(--linha);border:1px solid var(--linha)}
+.doc{background:var(--ground);padding:1.1rem;display:flex;flex-direction:column;gap:.4rem;
+     text-decoration:none;color:inherit;border-left:3px solid transparent}
+.doc:hover{background:var(--caixa);border-left-color:var(--marcador)}
+.doc .n{font-family:var(--display);font-size:1.5rem;line-height:1;color:var(--miudo)}
+.doc b{font-size:14px;letter-spacing:.04em}
+.doc span{font-size:12px;color:var(--miudo);line-height:1.45}
+
+.estado{display:flex;flex-direction:column;gap:.35rem;max-width:var(--medida)}
+.estado > div{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:baseline;
+              border-bottom:1px dotted var(--linha);padding-bottom:.35rem;font-size:13.5px}
+.estado .selo{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;
+              padding:.1rem .45rem;white-space:nowrap}
+.selo-pronto{background:var(--marcador);color:var(--tinta)}
+.selo-voce{border:1px solid var(--acento);color:var(--acento)}
+
+/* =========================================================================
+   BIBLIOTECA — parte 2 (sprint 2)
+   Adições. Nenhum componente do sprint 1 é redefinido aqui.
+   ========================================================================= */
+
+/* cabeçalho de página de documento */
+.pg-cabeca{display:flex;flex-direction:column;gap:.7rem;
+           border-bottom:2px dashed var(--linha);padding-bottom:2rem}
+.pg-cabeca h1{font-family:var(--display);font-weight:400;text-transform:uppercase;margin:0;
+              font-size:clamp(2.2rem,7vw,3.6rem);line-height:.88}
+
+/* grade de cartões com moldura compartilhada */
+.cartoes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1px;
+         background:var(--linha);border:1px solid var(--linha)}
+.cartoes > div{background:var(--ground);padding:1rem;display:flex;flex-direction:column;gap:.4rem}
+.cartoes b{font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.cartoes p{font-size:13px;line-height:1.5}
+
+/* tabela de dados */
+.tabela-rolo{overflow-x:auto;border:1px solid var(--linha)}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:520px}
+th,td{text-align:left;padding:.55rem .7rem;border-bottom:1px solid var(--linha-fraca);
+      vertical-align:top;line-height:1.45}
+th{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--miudo);
+   background:var(--caixa);white-space:nowrap}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700}
+tr:last-child td{border-bottom:0}
+
+/* logotipo */
+.logo-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem}
+.logo-caixa{border:1px solid var(--linha);padding:1.5rem 1rem 1rem;display:flex;
+            flex-direction:column;align-items:center;justify-content:space-between;
+            gap:1.25rem;min-height:190px}
+.logo-caixa.negativo{background:var(--tinta);border-color:var(--tinta)}
+.logo-caixa.negativo .rotulo{color:var(--espinha-miudo)}
+.logo-caixa.amarelo{background:var(--marcador);border-color:var(--marcador)}
+.logo-caixa.amarelo .rotulo{color:var(--tinta-60)}
+.rotulo{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--miudo);
+        text-align:center}
+.assinatura{font-family:var(--display);font-size:2.9rem;line-height:.85;display:flex;
+            align-items:flex-start}
+.assinatura .a{color:var(--marcador);font-size:.62em;line-height:1}
+.negativo .assinatura{color:var(--papel)}
+.amarelo .assinatura,.amarelo .assinatura .a{color:var(--tinta)}
+.avatar{width:92px;height:92px;border-radius:50%;background:var(--marcador);
+        display:grid;place-items:center;flex:none}
+.avatar svg{width:60px;height:60px;color:var(--tinta)}
+.avatar.mini{width:32px;height:32px}
+.avatar.mini svg{width:21px;height:21px}
+.avatar-fila{display:flex;align-items:center;gap:1rem}
+.proibido{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.55rem}
+.proibido > div{border-left:3px solid var(--acento);padding:.35rem 0 .35rem .7rem;
+                font-size:13px;line-height:1.45}
+
+/* paleta */
+.paleta{display:flex;flex-direction:column;gap:.5rem;max-width:var(--medida)}
+.cor{display:grid;grid-template-columns:62px 1fr auto;align-items:center;gap:1rem;
+     border-bottom:1px solid var(--linha);padding-bottom:.5rem}
+.cor .nome{font-size:13px;font-weight:700;letter-spacing:.04em}
+.cor .uso{font-size:12px;color:var(--miudo);line-height:1.4}
+.cor .hex{font-size:12px;letter-spacing:.1em;font-variant-numeric:tabular-nums;color:var(--miudo)}
+.proporcao{display:flex;height:34px;border:1px solid var(--linha);max-width:var(--medida)}
+.proporcao span{display:grid;place-items:center;font-size:10px;letter-spacing:.1em}
+
+/* tipografia */
+.specimen{border:1px solid var(--linha);padding:1.25rem;display:flex;flex-direction:column;gap:.5rem}
+.specimen .amostra-display{font-family:var(--display);font-size:clamp(2.2rem,8vw,3.6rem);
+                           line-height:.88;text-transform:uppercase;margin:0}
+.specimen .amostra-mono{font-size:15px;margin:0}
+
+/* tom de voz */
+.regua{display:flex;flex-direction:column;gap:.5rem;max-width:var(--medida)}
+.regua-barra{display:grid;grid-template-columns:5fr 3fr 2fr;height:44px;
+             border:1px solid var(--texto);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.regua-barra > div{display:grid;place-items:center;text-align:center;padding:0 .4rem}
+.regua-barra .zona{background:var(--marcador);color:var(--tinta);font-weight:700}
+.regua-legenda{display:flex;justify-content:space-between;font-size:11px;color:var(--miudo);
+               letter-spacing:.08em;gap:1rem}
+.troca{display:flex;flex-direction:column;gap:1rem;max-width:var(--medida)}
+.troca > div{display:flex;flex-direction:column;gap:.3rem;border-left:3px solid var(--marcador);
+             padding-left:.9rem}
+.troca .nao{color:var(--miudo);text-decoration:line-through;font-size:13px}
+.troca .sim{font-size:14px}
+.lexico{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.25rem}
+.lexico ul{list-style:none;padding:0;margin:0;font-size:13px;display:flex;
+           flex-direction:column;gap:.35rem}
+.lexico li{border-bottom:1px dotted var(--linha);padding-bottom:.3rem}
+.lexico i{font-style:normal;color:var(--miudo)}
+.frases{display:flex;flex-direction:column;gap:.7rem}
+.frases p{font-family:var(--display);font-size:clamp(1.3rem,4.5vw,1.8rem);line-height:1.05;
+          text-transform:uppercase;max-width:22ch}
+
+/* palco de vocabulário visual — o conteúdo dele
+   é escrito depois do bloco 2 da entrevista */
+.balao{position:absolute;background:var(--papel);color:var(--tinta);border:2px solid var(--tinta);
+       font-size:11px;line-height:1.3;padding:.45rem .55rem;max-width:44%}
+.balao::after{content:"";position:absolute;bottom:-9px;left:16px;border:5px solid transparent;
+              border-top-color:var(--tinta)}
+.colagem .manchete-col{position:absolute;left:5%;bottom:6%;font-family:var(--display);
+  font-size:clamp(1.3rem,5vw,2.2rem);line-height:.92;text-transform:uppercase;
+  color:var(--papel);max-width:62%}
+
+/* o mapa */
+.mapa{display:flex;flex-direction:column;gap:1.5rem}
+.eixo{display:flex;flex-direction:column;gap:.6rem}
+.eixo-topo{display:flex;align-items:baseline;gap:.7rem;border-bottom:2px solid var(--texto);
+           padding-bottom:.3rem;flex-wrap:wrap}
+.eixo-topo .id{font-family:var(--display);font-size:1.5rem;line-height:1;color:var(--acento);flex:none}
+.eixo-topo b{font-size:14px;letter-spacing:.16em;text-transform:uppercase}
+.eixo-topo em{font-style:normal;font-size:11px;color:var(--miudo);letter-spacing:.08em;
+              margin-left:auto;text-align:right}
+.eixo ul{list-style:none;padding:0;margin:0;font-size:13.5px;line-height:1.45;
+         display:flex;flex-direction:column;gap:.35rem}
+.eixo li{padding-left:1.1em;text-indent:-1.1em}
+.eixo li::before{content:"✱ ";color:var(--texto);opacity:.75}
+
+.fonte{border:1px solid var(--linha);border-left:4px solid var(--acento);padding:1rem 1.1rem;
+       display:flex;flex-direction:column;gap:.5rem}
+.fonte p{font-size:13px;line-height:1.55}
+.fonte .biblio{font-size:12.5px;color:var(--miudo);line-height:1.6}
+
+/* =========================================================================
+   BIBLIOTECA — parte 3 (sprint 3, folha de elementos)
+   Renomeações obrigatórias vindas do documento original:
+     .palco (palco escuro)  -> .vitrine     — .palco já é o <main> do site
+     .peca  (card de ativo) -> .asset       — .peca é artigo de produção
+     .slide (demo de trilho)-> .slide-demo  — .slide é linha de slide de post
+   ========================================================================= */
+
+.painel{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:1.5rem;align-items:start}
+.painel > *{min-width:0}
+@media (max-width:720px){ .painel{grid-template-columns:1fr} }
+
+.controles{display:flex;flex-direction:column;gap:1rem;border:1px solid var(--linha);
+           padding:1.1rem;background:var(--caixa)}
+.campo{display:flex;flex-direction:column;gap:.35rem}
+.campo label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--miudo)}
+.campo output{font-size:12px;color:var(--texto);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--acento)}
+.opcoes{display:flex;flex-wrap:wrap;gap:.35rem}
+.opcoes button{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:.35rem .6rem;border:1px solid var(--linha);background:transparent;color:var(--texto);
+  cursor:pointer}
+.opcoes button[aria-pressed="true"]{background:var(--marcador);border-color:var(--marcador);
+  color:var(--tinta);font-weight:700}
+.acao{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;padding:.6rem .8rem;border:2px solid var(--texto);background:var(--texto);
+  color:var(--ground);cursor:pointer}
+.baixar{display:flex;gap:.4rem;flex-wrap:wrap}
+.baixar button{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  padding:.3rem .5rem;border:1px solid var(--linha);background:transparent;color:var(--miudo);
+  cursor:pointer}
+.baixar button:hover{color:var(--texto);border-color:var(--texto)}
+
+.vitrine{background:var(--tinta);padding:1.5rem;display:grid;place-items:center;
+         min-height:340px;overflow:hidden}
+.vitrine svg{max-width:100%;height:auto;max-height:56vh}
+
+.asset{display:flex;flex-direction:column;gap:.5rem}
+.asset-quadro{border:1px solid var(--linha);display:grid;place-items:center;padding:.9rem;
+              aspect-ratio:4/3;overflow:hidden}
+.asset-quadro.escuro{background:var(--tinta);border-color:var(--tinta)}
+.asset-quadro svg{width:100%;height:100%}
+.asset .nome{font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.asset .uso{font-size:11.5px;color:var(--miudo);line-height:1.4}
+
+.trilho{display:flex;gap:6px;overflow-x:auto;padding-bottom:.5rem;min-width:0}
+.slide-demo{position:relative;flex:none;width:200px;aspect-ratio:4/5;background:var(--tinta);
+  color:var(--papel);padding:.9rem;display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden}
+.slide-demo .banda{position:absolute;left:0;right:0;top:38%;height:16px;background:var(--marcador)}
+.slide-demo .txt{position:relative;font-family:var(--display);font-size:1.05rem;line-height:.95;
+                 text-transform:uppercase}
+.slide-demo .clausula{position:absolute;top:.7rem;left:.9rem;font-size:9px;letter-spacing:.14em;
+                      color:var(--papel-55)}
+.slide-demo .ast-canto{position:absolute;bottom:.7rem;right:.7rem;width:16px;height:16px;
+                       color:var(--papel);opacity:.75}
+.slide-demo .ast-canto svg{width:100%;height:100%}
+
+/* =========================================================================
+   BIBLIOTECA — parte 4 (sprint 5, calendário)
+   .titulo/.meta/.tarefa ficam escopados dentro de .dia para não vazarem.
+   ========================================================================= */
+
+.semana{border:1px solid var(--linha);display:flex;flex-direction:column}
+.semana-topo{display:flex;align-items:baseline;gap:.8rem;flex-wrap:wrap;background:var(--caixa);
+             padding:.7rem .9rem;border-bottom:1px solid var(--linha)}
+.semana-topo b{font-size:13px;letter-spacing:.18em;text-transform:uppercase}
+.semana-topo em{font-style:normal;font-size:12px;color:var(--miudo);margin-left:auto}
+
+.dia{display:grid;grid-template-columns:62px 14px 1fr;gap:.9rem;align-items:start;
+     padding:.85rem .9rem;border-bottom:1px dotted var(--linha)}
+.dia:last-child{border-bottom:0}
+.dia .quando{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--miudo);
+             padding-top:.2rem;line-height:1.4}
+.dia .oque{display:flex;flex-direction:column;gap:.2rem}
+.dia .dia-tit{font-size:14.5px;font-weight:700;line-height:1.35}
+.dia .meta{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--miudo)}
+.dia .tarefa{font-size:13px;line-height:1.5}
+.swatch.sw-tinta{background:var(--tinta)}
+.swatch.sw-papel{background:var(--papel)}
+.swatch.sw-marcador{background:var(--marcador)}
+
+.destaques{display:flex;gap:.8rem;flex-wrap:wrap}
+.dest{display:flex;flex-direction:column;align-items:center;gap:.35rem;width:76px}
+.dest .bola{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;
+            border:2px solid var(--linha)}
+.dest .bola svg{width:32px;height:32px}
+.dest span{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;text-align:center;
+           color:var(--miudo);line-height:1.25}
+
+.grade-perfil{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;max-width:330px}
+.grid-tile.t-tinta{background:var(--tinta);color:var(--papel)}
+.grid-tile.t-papel{background:var(--papel);color:var(--tinta)}
+.grid-tile.t-marcador{background:var(--marcador);color:var(--tinta)}
+
+/* =========================================================================
+   BIBLIOTECA — parte 5 (UI/UX 2, grade de produção)
+   ========================================================================= */
+
+/* alterna grade / detalhe */
+#pg-producao[data-vista="detalhe"] .so-grade{display:none}
+#pg-producao[data-vista="grade"]   .so-detalhe{display:none}
+
+.barra-filtros{display:flex;flex-direction:column;gap:.7rem;
+               border:1px solid var(--linha);padding:.9rem 1rem;background:var(--caixa)}
+.filtro-linha{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap}
+.filtro-rot{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--miudo);
+            min-width:58px;flex:none}
+/* .chip já é a amostra de cor da paleta — este é outro componente */
+.filtro-btn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:.28rem .55rem;
+      border:1px solid var(--linha);background:transparent;color:var(--texto);cursor:pointer;
+      white-space:nowrap}
+.filtro-btn:hover{border-color:var(--texto)}
+.filtro-btn[aria-pressed="true"]{background:var(--marcador);border-color:var(--marcador);
+                           color:var(--tinta);font-weight:700}
+.filtro-resumo{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+               font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--miudo)}
+.limpar{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+        background:none;border:0;color:var(--acento);cursor:pointer;padding:0;
+        text-decoration:underline}
+
+.grade-pecas{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:1px;
+             background:var(--linha);border:1px solid var(--linha)}
+.cartao{background:var(--ground);border:0;text-align:left;font-family:var(--mono);
+        color:var(--texto);cursor:pointer;padding:0;display:flex;flex-direction:column;
+        min-height:150px}
+.cartao:hover{background:var(--caixa)}
+.cartao:hover .cartao-nome{text-decoration:underline;text-underline-offset:3px}
+.cartao-topo{display:flex;align-items:stretch;gap:.7rem;padding:.8rem .9rem .5rem}
+.cartao-n{font-family:var(--display);font-size:1.4rem;line-height:1;color:var(--tinta);
+          background:var(--marcador);padding:.14em .28em .06em;flex:none;align-self:flex-start}
+.cartao-nome{font-size:14px;font-weight:700;line-height:1.25}
+.cartao-meta{padding:0 .9rem .6rem;font-size:11px;color:var(--miudo);line-height:1.5;flex:1}
+.cartao-meta b{color:var(--texto);font-weight:700}
+.cartao-fundo{display:flex;height:7px;margin-top:auto}
+.cartao-fundo span{flex:1}
+.cartao[hidden]{display:none}
+
+.sem-resultado{border:1px dashed var(--linha);padding:1.5rem;text-align:center;
+               font-size:13px;color:var(--miudo)}
+
+/* detalhe */
+.volta{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}
+.btn-volta{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+           background:transparent;border:1px solid var(--linha);color:var(--texto);
+           padding:.4rem .7rem;cursor:pointer}
+.btn-volta:hover{border-color:var(--texto)}
+.passo{margin-left:auto;display:flex;gap:.35rem}
+.passo button{font-family:var(--mono);font-size:11px;background:transparent;
+              border:1px solid var(--linha);color:var(--texto);padding:.4rem .6rem;cursor:pointer}
+.passo button:disabled{opacity:.35;cursor:default}
+.passo button:not(:disabled):hover{border-color:var(--texto)}
+
+/* =========================================================================
+   BIBLIOTECA — parte 6 (UI/UX 4, vitrines)
+   ========================================================================= */
+
+/* Sangria controlada. O texto fica em 66ch porque é a medida boa de leitura,
+   mas bloco visual não tem medida de leitura — a partir de 1180px ele avança
+   sobre a sobra lateral em vez de deixá-la vazia. */
+@media (min-width:1180px){
+  .largo{width:calc(100% + 96px);margin-left:-48px;margin-right:-48px}
+}
+@media (min-width:1560px){
+  .largo{width:calc(100% + 220px);margin-left:-110px;margin-right:-110px}
+}
+
+/* grade dos seis formatos: cartão maior, para o modelo em escala ser legível */
+.grade-formatos{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1.1rem}
+
+/* paleta como cartões de cor */
+.paleta-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:1px;
+              background:var(--linha);border:1px solid var(--linha);max-width:none}
+.cor-cartao{background:var(--ground);display:flex;flex-direction:column}
+.cor-amostra{aspect-ratio:16/9;display:flex;align-items:flex-end;padding:.5rem .6rem}
+.cor-amostra code{font-size:11px;letter-spacing:.08em;font-family:var(--mono);
+                  font-variant-numeric:tabular-nums}
+.cor-info{padding:.6rem .7rem;display:flex;flex-direction:column;gap:.2rem}
+.cor-info b{font-size:13px;letter-spacing:.04em}
+.cor-info span{font-size:11.5px;color:var(--miudo);line-height:1.4}
+
+/* o mapa em colunas quando há espaço */
+@media (min-width:900px){
+  .mapa{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+        gap:1.5rem 1.75rem;align-items:start}
+}
+.eixo{border-top:2px solid var(--texto);padding-top:.5rem}
+.eixo-topo{border-bottom:0;padding-bottom:.15rem}
+
+/* =========================================================================
+   BIBLIOTECA — parte 7 (UI/UX 5, rastreador de publicação)
+   ========================================================================= */
+
+.rastreador{border:1px solid var(--linha);background:var(--caixa);padding:1.1rem}
+.rastreador-vazio{display:flex;flex-direction:column;gap:.7rem;align-items:flex-start}
+.rastreador-vazio .linha{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+input[type="date"]{font-family:var(--mono);font-size:13px;padding:.45rem .55rem;
+  border:1px solid var(--linha);background:var(--ground);color:var(--texto)}
+
+.rastreador-ativo{display:flex;flex-direction:column;gap:.9rem}
+.marco{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+       background:var(--linha);border:1px solid var(--linha)}
+.marco > div{background:var(--ground);padding:.7rem .8rem;display:flex;flex-direction:column;gap:.15rem}
+.marco dt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--miudo)}
+.marco dd{margin:0;font-size:14px;font-weight:700;line-height:1.3}
+.marco dd small{display:block;font-weight:400;font-size:11.5px;color:var(--miudo);
+                letter-spacing:0;text-transform:none;margin-top:.1rem}
+
+.rastreador-pe{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+               flex-wrap:wrap;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+               color:var(--miudo)}
+.redefinir{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+           background:none;border:0;color:var(--acento);cursor:pointer;padding:0;
+           text-decoration:underline}
+
+/* blocos de montagem da semana 0 — contados para trás a partir da estreia */
+.prep{display:grid;grid-template-columns:76px 1fr;gap:.9rem;align-items:start;
+      padding:.8rem .9rem;border-bottom:1px dotted var(--linha)}
+.prep:last-child{border-bottom:0}
+.prep .quando{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--miudo);
+              line-height:1.4;padding-top:.15rem}
+.prep .quando b{display:block;font-size:13px;color:var(--texto);letter-spacing:.06em}
+.prep .quando .data{display:block;font-size:12.5px;font-weight:700;color:var(--texto);
+                    font-variant-numeric:tabular-nums;margin-top:.15rem}
+.prep .oque{display:flex;flex-direction:column;gap:.2rem}
+.prep .oque b{font-size:14px;line-height:1.35}
+.prep .oque span{font-size:12.5px;color:var(--miudo);line-height:1.5}
+.prep[data-estado="hoje"]{background:var(--marcador-forte)}
+.prep[data-estado="passou"] .quando .data{color:var(--acento)}
+@media (max-width:430px){ .prep{grid-template-columns:62px 1fr;gap:.6rem;padding:.7rem} }
+
+/* estado de cada dia programado */
+.dia .data{display:block;font-size:12.5px;font-weight:700;color:var(--texto);
+           font-variant-numeric:tabular-nums;margin-top:.15rem}
+.dia .publicar{display:flex;align-items:center;gap:.45rem;margin-top:.4rem;
+               font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--miudo);
+               cursor:pointer;width:fit-content}
+.dia .publicar input{width:15px;height:15px;accent-color:var(--acento);cursor:pointer;margin:0}
+.dia[data-estado="hoje"]{background:var(--marcador-forte)}
+.dia[data-estado="hoje"] .quando{color:var(--texto);font-weight:700}
+.dia[data-estado="atrasado"] .data{color:var(--acento)}
+.dia[data-publicado="1"] .dia-tit{text-decoration:line-through;color:var(--miudo)}
+.dia[data-publicado="1"] .publicar{color:var(--texto)}
+.selo-hoje{background:var(--marcador);color:var(--tinta);font-size:9px;font-weight:700;
+           letter-spacing:.14em;text-transform:uppercase;padding:.1rem .35rem;
+           display:inline-block;margin-top:.2rem}
+
+/* =========================================================================
+   BIBLIOTECA — parte 8 (UI/UX 6, toque e telas estreitas)
+   ========================================================================= */
+
+@media (max-width:860px){
+  /* Alvo de toque. O dedo não tem a precisão do ponteiro: controles primários
+     vão a 44 px, que é a medida confortável, e os secundários a 40. */
+  .gaveta-btn,.fechar-gaveta{min-width:44px;min-height:44px;font-size:18px}
+  .busca-campo{min-height:44px;font-size:16px}   /* 16px evita o zoom automático do iOS */
+  .menu a{min-height:46px;align-items:center}
+  .subnav a{padding:.62rem 0 .62rem .7rem}
+  .filtro-btn{min-height:40px;padding:.5rem .7rem}
+  .acao,.btn-volta,.passo button{min-height:44px}
+  .baixar button{min-height:38px;padding:.5rem .7rem}
+  .tarefa-item{padding:.9rem}
+  .tarefa-item input,.dia .publicar input{width:20px;height:20px}
+  .dia .publicar{padding:.35rem 0;min-height:40px}
+  input[type="date"]{min-height:44px;font-size:16px}
+  .limpar,.redefinir{padding:.5rem 0;min-height:40px}
+  .tema-btn{min-height:44px}
+}
+
+/* telas bem estreitas: devolve largura ao conteúdo */
+@media (max-width:430px){
+  .palco{padding:1.4rem .8rem 3rem}
+  .dia{grid-template-columns:52px 10px 1fr;gap:.6rem;padding:.75rem .7rem}
+  .corte{grid-template-columns:1fr;gap:.3rem}
+  .corte .tc{padding-top:0}
+  .slide{gap:.6rem}
+  .cartao-topo{padding:.7rem .75rem .45rem}
+  .cartao-meta{padding:0 .75rem .55rem}
+  .numeros{grid-template-columns:repeat(2,1fr)}
+  .barra-filtros{padding:.8rem}
+  .filtro-rot{min-width:auto;width:100%}
+  .pg-cabeca h1,.capa h1{overflow-wrap:break-word}
+}
+
+/* =========================================================================
+   BIBLIOTECA — parte 9 (MAT 1, vitrine de materiais)
+   ========================================================================= */
+
+.ativos{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:1.25rem}
+.ativo{border:1px solid var(--linha);display:flex;flex-direction:column}
+.ativo-palco{background:var(--caixa);padding:1.4rem;display:grid;place-items:center}
+.ativo-palco .recorte-redondo{width:190px;height:190px;border-radius:50%;overflow:hidden;
+  box-shadow:0 0 0 1px var(--linha)}
+.ativo-palco svg{display:block;width:100%;height:100%}
+
+/* a mesma arte nos tamanhos em que o Instagram realmente mostra */
+.tamanhos{display:flex;align-items:flex-end;gap:.9rem;padding:.9rem 1rem;
+          border-top:1px solid var(--linha);background:var(--ground)}
+.tamanho{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.tamanho .recorte-redondo{border-radius:50%;overflow:hidden;box-shadow:0 0 0 1px var(--linha)}
+.tamanho .recorte-redondo svg{display:block;width:100%;height:100%}
+.tamanho small{font-size:9px;letter-spacing:.1em;color:var(--miudo);
+               font-variant-numeric:tabular-nums}
+
+/* ativo largo: logotipo e assinatura não são quadrados */
+.ativo-palco.largura svg{width:100%;height:auto;max-height:150px}
+/* ativo alto: capa de destaque e gabarito são verticais */
+.ativo-palco.altura svg{height:auto;width:auto;max-height:290px;max-width:100%}
+.ativos.verticais{grid-template-columns:repeat(auto-fill,minmax(184px,1fr))}
+.ativo-palco.claro{background:var(--papel)}
+.ativo-palco.escuro{background:var(--tinta)}
+.ativo-palco.amarelo{background:var(--marcador)}
+
+/* xadrez padrão de transparência, para não confundir fundo branco com vazado */
+.ativo-palco.vazado{
+  background-color:#DED9CD;
+  background-image:
+    linear-gradient(45deg,rgba(18,17,16,.10) 25%,transparent 25%,transparent 75%,rgba(18,17,16,.10) 75%),
+    linear-gradient(45deg,rgba(18,17,16,.10) 25%,transparent 25%,transparent 75%,rgba(18,17,16,.10) 75%);
+  background-size:18px 18px;
+  background-position:0 0,9px 9px;
+}
+.ativo-palco.vazado.sobre-tinta{background-color:#2A2724}
+
+.ativo-info{padding:.85rem 1rem;display:flex;flex-direction:column;gap:.25rem;flex:1}
+.ativo-info b{font-size:13.5px;letter-spacing:.03em}
+.ativo-info span{font-size:12px;color:var(--miudo);line-height:1.45}
+.ativo .baixar{padding:0 1rem 1rem}
+
+.zona-segura{display:flex;flex-direction:column;gap:.4rem}
+.zona-segura .diag{display:grid;grid-template-columns:1fr auto;gap:1rem;font-size:12.5px;
+                   border-bottom:1px dotted var(--linha);padding-bottom:.3rem}
+.zona-segura .diag span:last-child{font-variant-numeric:tabular-nums;color:var(--miudo)}
+.zona-segura .diag[data-ok="0"] span:last-child{color:var(--acento);font-weight:700}
+
+/* =========================================================================
+   ACESSIBILIDADE E IMPRESSÃO
+   ========================================================================= */
+
+.pular{position:absolute;left:-9999px;background:var(--marcador);color:var(--tinta);
+       padding:.6rem 1rem;z-index:100;text-decoration:none;font-weight:700}
+.pular:focus{left:.5rem;top:.5rem}
+
+a{color:inherit}
+:focus-visible{outline:2px solid var(--acento);outline-offset:3px}
+
+@media print{
+  /* Imprime a página aberta — Ctrl+P no Manual sai o Manual, não os cinco
+     documentos emendados. Exceção deliberada: na Produção sai o caderno
+     inteiro com as catorze peças, porque é isso que se leva impresso para
+     produzir. Grade de cartões não serve em papel. */
+  .espinha,.barra,.veu,.pular{display:none!important}
+  .app{display:block}
+  .palco{padding:0;display:block;min-width:0}
+  .pagina{max-width:none;gap:1.6rem}
+  .largo{width:auto;margin-left:0;margin-right:0}
+  body{font-size:10.5pt;background:#fff;color:#000}
+
+  /* controles não existem no papel */
+  .controles,.baixar,.opcoes,.barra-filtros,.grade-pecas,.so-detalhe,
+  .rastreador,.tema-btn,.busca-caixa,.passo,.publicar,.limpar,.redefinir,
+  .sem-resultado{display:none!important}
+  .tarefa-item input{display:none}
+
+  /* na Produção, revela as catorze peças */
+  #pg-producao .peca[hidden]{display:flex!important}
+  #pg-producao .peca{break-before:page;page-break-before:always}
+  #pg-producao .peca:first-of-type{break-before:auto;page-break-before:auto}
+
+  .sec,.peca{break-inside:auto;page-break-inside:auto}
+  h2.cab,h2.peca-titulo,h3{break-after:avoid;page-break-after:avoid}
+  .slide,.corte,.cor-cartao,.dia,.eixo,.tarefa-item{break-inside:avoid;page-break-inside:avoid}
+  .mock,.colagem,.vitrine,.grade-perfil,.ficha{break-inside:avoid;page-break-inside:avoid}
+  .caixa,.aviso,.nota,.specs > div{break-inside:avoid;page-break-inside:avoid}
+  a{text-decoration:none;color:#000}
+}
+</style>
+</style>
+
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+<div class="barra">
+  <button class="gaveta-btn" id="gavetaBtn" aria-label="Abrir menu" aria-expanded="false">☰</button>
+  <!-- [GLIFO DA MARCA] — SVG inline, viewBox 0 0 100 100, fill="currentColor".
+       Inline e não <img> porque ele herda a cor do tema e aparece no export.
+       O quadrado abaixo é marcador de lugar; troque o conteúdo, não a moldura. -->
+  <svg viewBox="0 0 100 100" fill="currentColor" aria-hidden="true"><rect x="18" y="18" width="64" height="64" rx="6" fill="none" stroke="currentColor" stroke-width="7" stroke-dasharray="9 7"/></svg>
+  <b>[SIGLA]</b>
+  <span class="atual" id="barraAtual">Início</span>
+</div>
+<button class="veu" id="veu" hidden aria-label="Fechar menu"></button>
+
+<div class="app">
+
+  <aside class="espinha" id="espinha">
+    <button class="fechar-gaveta" id="fecharGaveta" aria-label="Fechar menu">✕</button>
+    <a class="espinha-marca" href="#inicio">
+      <svg viewBox="0 0 100 100" role="img" aria-label="[GLIFO DA MARCA]">
+        <rect x="18" y="18" width="64" height="64" rx="6" fill="none" stroke="currentColor" stroke-width="7" stroke-dasharray="9 7"/>
+      </svg>
+      <span style="flex:1">
+        <b>[SIGLA]</b>
+        <span>Central da marca</span>
+      </span>
+    </a>
+
+    <div class="busca-caixa">
+      <label for="busca" class="micro" style="display:block;color:var(--espinha-miudo);margin-bottom:.35rem">Buscar</label>
+      <input type="search" id="busca" class="busca-campo" placeholder="busca em toda a central"
+             autocomplete="off" spellcheck="false">
+      <p class="busca-info" id="buscaInfo" hidden></p>
+    </div>
+
+    <nav aria-label="Resultados da busca" id="resultadosWrap" hidden>
+      <ul class="resultados" id="resultados"></ul>
+      <p class="vazio" id="buscaVazio" hidden>Nada encontrado.</p>
+    </nav>
+
+    <nav aria-label="Documentos" id="navDocs">
+      <ul class="menu" id="menu">
+        <li><a href="#inicio"     data-pg="inicio"><span class="n">0</span><span>Início</span></a></li>
+        <li><a href="#estrategia" data-pg="estrategia"><span class="n">1</span><span>Estratégia</span></a></li>
+        <li><a href="#manual"     data-pg="manual"><span class="n">2</span><span>Manual de Marca</span></a></li>
+        <li><a href="#materiais"  data-pg="materiais"><span class="n">3</span><span>Materiais</span></a></li>
+        <li><a href="#elementos"  data-pg="elementos"><span class="n">4</span><span>Folha de Elementos</span></a></li>
+        <li><a href="#producao"   data-pg="producao"><span class="n">5</span><span>Produção</span></a></li>
+        <li><a href="#calendario" data-pg="calendario"><span class="n">6</span><span>Calendário</span></a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label="Nesta página" id="subnavWrap" hidden>
+      <p class="subnav-tit">Nesta página</p>
+      <ul class="subnav" id="subnav"></ul>
+    </nav>
+
+    <div class="espinha-pe">
+      <button class="tema-btn" id="temaBtn" aria-label="Alternar tema">Tema: automático</button>
+      <p class="micro" style="color:var(--espinha-miudo)">molde · sem marca<br>ainda</p>
+    </div>
+  </aside>
+
+  <main class="palco" id="conteudo">
+
+    <!-- ============================ INÍCIO ============================ -->
+    <div class="pagina" id="pg-inicio" data-titulo="Início">
+      <header class="capa">
+        <svg class="glifo" viewBox="0 0 100 100" role="img" aria-label="[GLIFO DA MARCA]">
+          <rect x="18" y="18" width="64" height="64" rx="6" fill="none" stroke="currentColor" stroke-width="7" stroke-dasharray="9 7"/>
+        </svg>
+        <h1>[SIGLA]</h1>
+        <p class="desc">[NOME DA MARCA]</p>
+        <p class="micro">Central da marca · tudo que existe do projeto, num lugar só</p>
+      </header>
+
+      <section class="sec">
+        <p class="lede">[A FRASE DE UMA LINHA QUE DIZ O QUE A MARCA FAZ]</p>
+        <p>Esta central reúne o projeto inteiro: a estratégia que originou a marca, o manual que define como ela se comporta, os elementos visuais prontos pra usar, as peças de conteúdo escritas e o calendário de publicação. Nada aqui é resumo — é o material completo, reorganizado pra ser consultado enquanto você produz.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">✱</span><span class="tit">Quanto falta</span></h2>
+        <p>Esta central nasceu vazia. Cada lugar por preencher é um <b>colchete</b> — <span class="colchete">[ASSIM]</span> — e o contador abaixo os encontra sozinho, lendo a própria página. Ele não tem opinião sobre o projeto estar bom: tem opinião sobre o projeto <em>saber onde está</em>.</p>
+
+        <div class="painel">
+          <div class="barra-progresso"><i id="progresso"></i></div>
+          <p class="micro" id="progresso-txt">contando…</p>
+        </div>
+
+        <div class="agora" id="agora"></div>
+
+        <p class="micro">Preenchimento não é digitar por cima do colchete e seguir. É <b>responder o bloco da entrevista</b> que aquele colchete pertence — porque um slot preenchido por analogia com outra marca custa mais caro que um slot vazio, e não acusa.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab simples"><span class="tit">Os documentos</span></h2>
+        <div class="docs">
+          <a class="doc" href="#estrategia"><b>1 · Estratégia</b><span>Por que esta marca existe, para quem, e o que ela ocupa que estava vazio.</span></a>
+          <a class="doc" href="#manual"><b>2 · Manual de Marca</b><span>Como ela se comporta: símbolo, paleta, tipografia, vocabulário visual, tom de voz.</span></a>
+          <a class="doc" href="#materiais"><b>3 · Materiais</b><span>Os arquivos prontos: foto de perfil, avatar, logotipo, assinatura, capas.</span></a>
+          <a class="doc" href="#elementos"><b>4 · Folha de Elementos</b><span>Os geradores: fundos, texturas, marcações, selos, continuidade de carrossel.</span></a>
+          <a class="doc" href="#producao"><b>5 · Produção</b><span>As peças escritas, com ficha, esqueleto e o que medir em cada uma.</span></a>
+          <a class="doc" href="#calendario"><b>6 · Calendário</b><span>Ordem de publicação, montagem, e o rastreador do que já saiu.</span></a>
+        </div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab simples"><span class="tit">Como usar</span></h2>
+        <ul class="lista">
+          <li>A busca da esquerda varre <b>as seis páginas ao mesmo tempo</b>. É o caminho mais curto para qualquer coisa aqui.</li>
+          <li>O botão de tema alterna claro, escuro e automático. Fica salvo neste navegador.</li>
+          <li>Marcações e o calendário salvam <b>neste navegador</b>, não em servidor. Trocar de máquina zera.</li>
+          <li>Este arquivo abre por duplo clique, sem servidor. Se precisar de servidor para alguma ferramenta, ele está no LEIA-ME do projeto.</li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- ========================== ESTRATÉGIA ========================== -->
+    <div class="pagina" id="pg-estrategia" data-titulo="Estratégia">
+      <header class="pg-cabeca">
+        <p class="micro">Documento 1</p>
+        <h1>Estratégia</h1>
+        <p class="desc">Por que esta marca existe, e por que agora.</p>
+      </header>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">1</span><span class="tit">A ideia original</span></h2>
+        <p>[DE ONDE VEIO A MARCA — A OBSERVAÇÃO, O INCÔMODO OU A OPORTUNIDADE QUE A ORIGINOU]</p>
+        <p class="micro">Marca consolidada já tem esta resposta escrita em algum lugar. Aqui é transcrição, não descoberta — se estiver no manual que você entregou, copie de lá em vez de reinventar.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">2</span><span class="tit">A tese</span></h2>
+        <h3>A frase que vai ao ar</h3>
+        <p class="lede">[A TESE EM UMA FRASE]</p>
+        <h3>Por que isso vira conteúdo</h3>
+        <p>[POR QUE ESSA TESE DÁ ASSUNTO PARA MESES, E NÃO PARA UM POST]</p>
+        <h3>O que muda a natureza do projeto</h3>
+        <p>[O QUE ESTA MARCA FAZ QUE UM CONCORRENTE NÃO CONSEGUE COPIAR SÓ IMITANDO A ARTE]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">3</span><span class="tit">Referências</span></h2>
+        <p>Três a cinco perfis ou marcas que já fazem bem alguma parte do que esta vai fazer. <b>Não é para imitar.</b> É para nomear o que se rouba de cada — e o que não se rouba.</p>
+        <div class="cartoes">
+          <div class="cartao"><b>[REFERÊNCIA 1]</b><span>[O QUE ELA FAZ BEM]</span></div>
+          <div class="cartao"><b>[REFERÊNCIA 2]</b><span>[O QUE ELA FAZ BEM]</span></div>
+          <div class="cartao"><b>[REFERÊNCIA 3]</b><span>[O QUE ELA FAZ BEM]</span></div>
+        </div>
+        <h3>O que se rouba de cada um</h3>
+        <ul class="lista">
+          <li><b>[REFERÊNCIA 1]</b> — [O GESTO ESPECÍFICO QUE SE ROUBA]</li>
+          <li><b>[REFERÊNCIA 2]</b> — [O GESTO ESPECÍFICO QUE SE ROUBA]</li>
+          <li><b>[REFERÊNCIA 3]</b> — [O GESTO ESPECÍFICO QUE SE ROUBA]</li>
+        </ul>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">4</span><span class="tit">O espaço vazio</span></h2>
+        <p>[O QUE NINGUÉM ESTÁ FAZENDO NESTE MERCADO, E QUE ESTA MARCA VAI OCUPAR]</p>
+        <p class="micro">Se a resposta for "ninguém faz isso" sem exemplo, o espaço provavelmente não está vazio — está sem demanda. Nomeie quem chega perto e onde para.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">5</span><span class="tit">O enquadramento</span></h2>
+        <p>[A LEITURA ERRADA MAIS PROVÁVEL DA MARCA, E COMO O CONTEÚDO A CORRIGE]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">6</span><span class="tit">O público</span></h2>
+        <h3>Quem consome</h3>
+        <p>[QUEM VÊ O CONTEÚDO NO FEED]</p>
+        <h3>Quem decide</h3>
+        <p>[QUEM PAGA, CONTRATA OU AUTORIZA — QUANDO NÃO É A MESMA PESSOA]</p>
+        <p class="micro">Público duplo muda o conteúdo inteiro: a peça precisa funcionar para quem rola o feed <em>e</em> não constranger quem assina embaixo. Se for a mesma pessoa, escreva "é a mesma pessoa" — isso também é resposta.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">7</span><span class="tit">O nome</span></h2>
+        <p>[O QUE O NOME SIGNIFICA E POR QUE ELE FOI ESCOLHIDO]</p>
+        <h3>[O ELEMENTO GRÁFICO QUE O NOME CARREGA]</h3>
+        <p>[SE O NOME TEM UM SINAL, UM ACENTO OU UMA MARCA QUE VIRA ELEMENTO VISUAL, ELE MORA AQUI]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">8</span><span class="tit">Objetivo de negócio</span></h2>
+        <p>[O QUE ESTE CONTEÚDO PRECISA PRODUZIR — VENDA, RESERVA, LEAD, RECONHECIMENTO, DEFESA DE PREÇO]</p>
+        <p class="micro">Escreva o objetivo REAL, mesmo que seja pouco nobre. Objetivo escondido reaparece como peça incoerente três meses depois.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">9</span><span class="tit">Riscos assumidos</span></h2>
+        <ul class="lista">
+          <li>[RISCO 1 — E POR QUE VALE A PENA MESMO ASSIM]</li>
+          <li>[RISCO 2 — E POR QUE VALE A PENA MESMO ASSIM]</li>
+          <li>[RISCO 3 — E POR QUE VALE A PENA MESMO ASSIM]</li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- ============================ MANUAL ============================ -->
+    <div class="pagina" id="pg-manual" data-titulo="Manual de Marca">
+      <header class="pg-cabeca">
+        <p class="micro">Documento 2</p>
+        <h1>Manual de Marca</h1>
+        <p class="desc">Como a marca se comporta quando ninguém está olhando.</p>
+      </header>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">1</span><span class="tit">O que é</span></h2>
+        <h3>Posicionamento</h3>
+        <p>[O QUE A MARCA É, EM UMA FRASE QUE CABERIA NA BIO]</p>
+        <h3>O que não é</h3>
+        <ul class="lista">
+          <li>[O QUE ELA NÃO É — 1]</li>
+          <li>[O QUE ELA NÃO É — 2]</li>
+          <li>[O QUE ELA NÃO É — 3]</li>
+        </ul>
+        <h3>Pra quem</h3>
+        <p>[PARA QUEM ELA FALA, EM UMA FRASE]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">2</span><span class="tit">O símbolo</span></h2>
+        <p>[O SINAL GRÁFICO QUE REPRESENTA A MARCA SOZINHO — MASCOTE, GLIFO, MONOGRAMA OU FORMA]</p>
+        <p class="micro">Se a marca não tem símbolo separado do logotipo, responda "não tem". Inventar mascote para preencher slot é o erro mais caro deste documento.</p>
+        <div class="grade-perfil" id="grade-simbolo"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">3</span><span class="tit">Logotipo</span></h2>
+        <div class="logo-grade">
+          <div class="logo-caixa"><div class="mock">[LOGO SOBRE CLARO]</div><p class="rotulo">sobre fundo claro</p></div>
+          <div class="logo-caixa negativo"><div class="mock">[LOGO SOBRE ESCURO]</div><p class="rotulo">sobre fundo escuro</p></div>
+          <div class="logo-caixa amarelo"><div class="mock">[LOGO SOBRE DESTAQUE]</div><p class="rotulo">sobre o destaque</p></div>
+        </div>
+        <h3>Área de respiro e tamanho mínimo</h3>
+        <p>[QUANTO DE FOLGA AO REDOR, E EM QUE TAMANHO ELE PARA DE FUNCIONAR]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">4</span><span class="tit">Paleta</span></h2>
+        <p>Cada cor precisa de um <b>papel</b>, não de um nome bonito. Cor sem papel vira decisão tomada de novo em cada peça.</p>
+        <div class="paleta-grade">
+          <div class="cor-cartao"><div class="cor-amostra" style="background:var(--tinta)"></div><div class="cor-info"><b>[NOME DA COR ESCURA]</b><span>[HEX]</span><span>papel: o que se lê</span></div></div>
+          <div class="cor-cartao"><div class="cor-amostra" style="background:var(--papel)"></div><div class="cor-info"><b>[NOME DA COR CLARA]</b><span>[HEX]</span><span>papel: onde o texto descansa</span></div></div>
+          <div class="cor-cartao"><div class="cor-amostra" style="background:var(--marcador)"></div><div class="cor-info"><b>[NOME DA COR DE DESTAQUE]</b><span>[HEX]</span><span>papel: o gesto que aponta</span></div></div>
+          <div class="cor-cartao"><div class="cor-amostra" style="background:var(--carimbo)"></div><div class="cor-info"><b>[NOME DA COR DE ALERTA]</b><span>[HEX]</span><span>papel: risco e proibição</span></div></div>
+        </div>
+        <h3>Combinações que passam</h3>
+        <p class="micro">O conferidor de contraste mede cada par e reprova abaixo de 4,5:1. Ele roda sobre os valores em <code>:root</code>, então trocar a paleta aqui é o que o alimenta.</p>
+        <div class="tabela-rolo">
+          <table class="tabela">
+            <thead><tr><th>Frente</th><th>Fundo</th><th>Razão</th><th>Uso</th></tr></thead>
+            <tbody>
+              <tr><td>[COR]</td><td>[COR]</td><td>[X,X:1]</td><td>[ONDE USAR]</td></tr>
+              <tr><td>[COR]</td><td>[COR]</td><td>[X,X:1]</td><td>[ONDE USAR]</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">5</span><span class="tit">Tipografia</span></h2>
+        <div class="specimen">
+          <p class="fonte" style="font-family:var(--display)">[FONTE DE TÍTULO]</p>
+          <p class="micro">Onde usa: manchete de peça, número, sigla. Licença de embutir: <span class="colchete">[SIM OU NÃO]</span></p>
+        </div>
+        <div class="specimen">
+          <p class="fonte" style="font-family:var(--mono)">[FONTE DE APOIO]</p>
+          <p class="micro">Onde usa: ficha técnica, legenda, texto corrido. Licença de embutir: <span class="colchete">[SIM OU NÃO]</span></p>
+        </div>
+        <div class="callout dest">
+          <p><b>A licença é decisão de arquitetura, não detalhe.</b> A arte exportada embute a fonte em base64 dentro do SVG, porque o export de PNG desenha a partir de um blob e blob não enxerga o <code>@font-face</code> da página. Sem direito de embutir, o arquivo publicado sai na fonte de fallback — e isso só aparece depois de publicado.</p>
+        </div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">6</span><span class="tit">Vocabulário visual</span></h2>
+        <p>O conjunto de <b>gestos</b> que a marca sabe fazer: o que ela desenha quando quer provar algo, mostrar algo, ou apontar para algo. Não é paleta e não é fonte — é o que faz duas peças serem da mesma marca mesmo com assuntos diferentes.</p>
+        <ul class="lista">
+          <li><b>[GESTO 1]</b> — [O QUE É, E QUANDO SE USA]</li>
+          <li><b>[GESTO 2]</b> — [O QUE É, E QUANDO SE USA]</li>
+          <li><b>[GESTO 3]</b> — [O QUE É, E QUANDO SE USA]</li>
+        </ul>
+        <div class="callout">
+          <p><b>Este é o slot que não pode ser herdado.</b> O vocabulário visual é a parte da marca que nasce da tese dela — e por isso é a única coisa deste molde que veio deliberadamente vazia, sem exemplo e sem padrão. Preencher aqui por analogia produz uma marca vestida de outra.</p>
+        </div>
+        <div class="colagem" id="demo-vocabulario"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">7</span><span class="tit">Tom de voz</span></h2>
+        <h3>A marca diria</h3>
+        <div class="frases">
+          <p>[FRASE QUE A MARCA DIRIA — 1]</p>
+          <p>[FRASE QUE A MARCA DIRIA — 2]</p>
+          <p>[FRASE QUE A MARCA DIRIA — 3]</p>
+          <p>[FRASE QUE A MARCA DIRIA — 4]</p>
+          <p>[FRASE QUE A MARCA DIRIA — 5]</p>
+        </div>
+        <h3>A marca nunca diria</h3>
+        <div class="frases proibido">
+          <p>[FRASE QUE A MARCA NUNCA DIRIA — 1]</p>
+          <p>[FRASE QUE A MARCA NUNCA DIRIA — 2]</p>
+          <p>[FRASE QUE A MARCA NUNCA DIRIA — 3]</p>
+          <p>[FRASE QUE A MARCA NUNCA DIRIA — 4]</p>
+          <p>[FRASE QUE A MARCA NUNCA DIRIA — 5]</p>
+        </div>
+        <h3>Léxico</h3>
+        <div class="lexico">
+          <div class="troca"><b>não</b> [PALAVRA EVITADA] <b>sim</b> [PALAVRA PREFERIDA]</div>
+          <div class="troca"><b>não</b> [PALAVRA EVITADA] <b>sim</b> [PALAVRA PREFERIDA]</div>
+          <div class="troca"><b>não</b> [PALAVRA EVITADA] <b>sim</b> [PALAVRA PREFERIDA]</div>
+        </div>
+        <h3>Humor</h3>
+        <p>[TEM HUMOR? DE QUE TIPO, E QUAL A COTA — QUANTAS PEÇAS EM DEZ PODEM SER ENGRAÇADAS]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">8</span><span class="tit">Sistema de post</span></h2>
+        <p>O esqueleto que toda peça respeita, para que a marca seja reconhecida antes de ser lida.</p>
+        <div class="tabela-rolo">
+          <table class="tabela">
+            <thead><tr><th>Elemento</th><th>Regra</th></tr></thead>
+            <tbody>
+              <tr><td>Formato</td><td>[PROPORÇÃO E PIXELS — EX.: 1080 × 1350]</td></tr>
+              <tr><td>Margem</td><td>[MARGEM EM PX]</td></tr>
+              <tr><td>Área segura</td><td>[TOPO E BASE QUE O APP COBRE COM INTERFACE]</td></tr>
+              <tr><td>Capa</td><td>[O QUE A CAPA SEMPRE TEM]</td></tr>
+              <tr><td>Fecho</td><td>[COMO TODA PEÇA TERMINA]</td></tr>
+              <tr><td>Assinatura</td><td>[O QUE APARECE NO RODAPÉ DE TODO SLIDE]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="slides" id="demo-esqueleto"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">9</span><span class="tit">O mapa</span></h2>
+        <p>Os eixos temáticos: os assuntos que a marca cobre, para que o calendário não seja improviso e para que uma peça saiba a que família pertence.</p>
+        <div class="mapa">
+          <div class="eixo"><div class="eixo-topo"><b>1</b><span>[NOME DO EIXO 1]</span></div><p>[O QUE ELE COBRE]</p></div>
+          <div class="eixo"><div class="eixo-topo"><b>2</b><span>[NOME DO EIXO 2]</span></div><p>[O QUE ELE COBRE]</p></div>
+          <div class="eixo"><div class="eixo-topo"><b>3</b><span>[NOME DO EIXO 3]</span></div><p>[O QUE ELE COBRE]</p></div>
+          <div class="eixo"><div class="eixo-topo"><b>4</b><span>[NOME DO EIXO 4]</span></div><p>[O QUE ELE COBRE]</p></div>
+        </div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">10</span><span class="tit">Nunca</span></h2>
+        <p>A lista curta do que não se faz — a que se consulta quando a peça está quase pronta e alguma coisa incomoda.</p>
+        <ul class="lista proibido">
+          <li>[NUNCA — 1]</li>
+          <li>[NUNCA — 2]</li>
+          <li>[NUNCA — 3]</li>
+          <li>[NUNCA — 4]</li>
+          <li>[NUNCA — 5]</li>
+        </ul>
+      </section>
+    </div>
+
+    <!-- =========================== MATERIAIS =========================== -->
+    <div class="pagina" id="pg-materiais" data-titulo="Materiais">
+      <header class="pg-cabeca">
+        <p class="micro">Documento 3</p>
+        <h1>Materiais</h1>
+        <p class="desc">Os arquivos prontos para subir. Cada um sai daqui em PNG no tamanho de publicação.</p>
+      </header>
+
+      <div class="callout">
+        <p><b>Esta página tem gerador, e o gerador nasce depois do bloco 2 da entrevista.</b> Ele desenha o símbolo da marca em SVG e exporta nos tamanhos reais — o que significa que ele precisa saber qual é o símbolo. Até lá as fichas abaixo declaram os requisitos, que já valem: são eles que dizem se o arquivo que você tem serve.</p>
+      </div>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">1</span><span class="tit">Foto de perfil</span></h2>
+        <div class="ficha">
+          <p><b>Tamanho:</b> 320 × 320 para conferência, 1080 × 1080 para subir.</p>
+          <p><b>Zona segura:</b> o app recorta no círculo inscrito — tudo tem que caber num raio de metade do lado a partir do centro.</p>
+          <p><b>Conferência:</b> a 40 px de largura, no feed, ainda dá para reconhecer? Se não, é complexa demais.</p>
+          <p>[QUAL DAS VERSÕES FOI ESCOLHIDA, E POR QUÊ]</p>
+        </div>
+        <div class="ativos" id="ativo-perfil"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">2</span><span class="tit">Avatar</span></h2>
+        <p>[A VERSÃO REDUZIDA DO SÍMBOLO, PARA COMENTÁRIO E NOTIFICAÇÃO]</p>
+        <div class="avatar-fila" id="fila-avatar"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">3</span><span class="tit">Logotipo</span></h2>
+        <p>[O ARQUIVO DO LOGOTIPO — EM SVG, NÃO EM PNG]</p>
+        <p class="micro">SVG e não PNG porque a central desenha o glifo inline: ele herda a cor do tema, aparece no export e não borra em nenhum tamanho. PNG de logo é decisão que se paga em toda peça futura.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">4</span><span class="tit">Assinatura de rodapé</span></h2>
+        <p>[O QUE APARECE NO PÉ DE TODO SLIDE — @, SITE, OU SÍMBOLO]</p>
+        <div class="assinatura" id="demo-assinatura"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">5</span><span class="tit">Capas de destaque</span></h2>
+        <p>[AS CAPAS DOS DESTAQUES DE STORIES — QUANTAS, E O QUE CADA UMA NOMEIA]</p>
+        <div class="destaques" id="fila-destaques"></div>
+        <p class="micro">Conferir no PNG e não na prévia: zero transparência, e a marca dentro de 45% do raio para o recorte circular não cortar nada.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">6</span><span class="tit">Gabaritos</span></h2>
+        <p>[OS ARQUIVOS EM BRANCO, NO TAMANHO CERTO, PARA QUEM FOR MONTAR PEÇA FORA DO MOTOR]</p>
+      </section>
+    </div>
+
+    <!-- ========================== ELEMENTOS =========================== -->
+    <div class="pagina" id="pg-elementos" data-titulo="Folha de Elementos">
+      <header class="pg-cabeca">
+        <p class="micro">Documento 4</p>
+        <h1>Folha de Elementos</h1>
+        <p class="desc">Os geradores. Cada um produz um elemento da arte, no navegador, sem editor.</p>
+      </header>
+
+      <div class="callout dest">
+        <p><b>Metade desta página depende do bloco 2 da entrevista, e a outra metade não.</b> Fundos, continuidade de carrossel e marcações à mão são mecanismos: funcionam em qualquer marca e vieram prontos. Os geradores 1 e 6 desenham <em>o gesto da marca</em> e por isso vieram vazios — eles são escritos depois que o vocabulário visual existir.</p>
+      </div>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">1</span><span class="tit">Gerador do gesto principal</span></h2>
+        <p>[O GERADOR DO ELEMENTO QUE MAIS APARECE NA ARTE — ESCRITO APÓS O BLOCO 2]</p>
+        <div class="controles" id="ctrl-gesto"></div>
+        <div class="vitrine" id="vitrine-gesto"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">2</span><span class="tit">Silhuetas</span></h2>
+        <p>Contornos extraídos de fotografia por vetorizador: limiar, componentes conexos, seguimento de borda, simplificação e suavização. São <b>dado</b>, não desenho — ninguém escreve Bézier à mão para forma orgânica.</p>
+        <p class="micro">O que ele precisa de você: fotos com <b>fundo separável</b> (o assunto claramente destacado do fundo) e pelo menos 1500 px no lado maior. Foto bonita com fundo confuso não fecha contorno. É por isso que a entrevista pede o banco de imagem no bloco 0, e não quando esta página for usada.</p>
+        <div class="vitrine" id="vitrine-silhuetas">[SILHUETAS — DEPENDE DAS IMAGENS EM _entrada/imagens]</div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">3</span><span class="tit">Fundos</span></h2>
+        <p>Os fundos disponíveis para uma peça, e quando usar cada um. O grão evita o retângulo chapado, que é o que faz arte digital parecer não terminada.</p>
+        <div class="grade-formatos" id="grade-fundos"></div>
+        <p>[QUAIS FUNDOS ESTA MARCA USA, E O CRITÉRIO DE ESCOLHA ENTRE ELES]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">4</span><span class="tit">Continuidade de carrossel</span></h2>
+        <p>O trilho que atravessa os slides de um carrossel, para que ele leia como uma coisa só e não como cinco imagens soltas.</p>
+        <p>[QUAL ELEMENTO ATRAVESSA OS SLIDES DESTA MARCA]</p>
+        <div class="trilho" id="demo-trilho"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">5</span><span class="tit">Marcações à mão</span></h2>
+        <p>Apontar, ligar, agrupar e circundar. É o vocabulário de quem explica no quadro — traço trêmulo, não linha de software. Serve em qualquer marca que precise <em>mostrar o mecanismo</em> em vez de descrevê-lo.</p>
+        <div class="vitrine" id="vitrine-marcacoes"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">6</span><span class="tit">Selos e carimbos</span></h2>
+        <p>[OS SELOS FIXOS DA MARCA — O QUE ELES DIZEM E ONDE APARECEM]</p>
+        <div class="vitrine" id="vitrine-selos"></div>
+      </section>
+    </div>
+
+    <!-- =========================== PRODUÇÃO ============================ -->
+    <div class="pagina" id="pg-producao" data-titulo="Produção">
+      <header class="pg-cabeca">
+        <p class="micro">Documento 5</p>
+        <h1>Produção</h1>
+        <p class="desc">As peças escritas, com ficha, esqueleto e o que medir em cada uma.</p>
+      </header>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">✱</span><span class="tit">A coleção</span></h2>
+        <p>[QUANTAS PEÇAS, DE QUE TIPOS, E O QUE ELAS COBREM JUNTAS]</p>
+        <p class="micro">A ficha de cada peça vive no JavaScript desta página, não no texto — para que a grade não dependa de raspar texto renderizado. Ao acrescentar uma peça, ela entra na constante <code>PECAS</code> <em>e</em> como <code>&lt;article class="peca"&gt;</code>; o init compara os dois e reclama no console se divergirem.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">✱</span><span class="tit">O esqueleto de todas elas</span></h2>
+        <p>[A ESTRUTURA QUE TODA PEÇA SEGUE — QUANTOS SLIDES, O QUE VAI EM CADA UM]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">✱</span><span class="tit">O que medir</span></h2>
+        <p>Os critérios de aceite. Alguns se conferem por máquina, outros por julgamento — e a diferença precisa estar declarada, senão o julgamento se disfarça de medição.</p>
+        <div class="tabela-rolo">
+          <table class="tabela">
+            <thead><tr><th>#</th><th>Critério</th><th>Como se confere</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>[CRITÉRIO 1]</td><td>[JULGAMENTO OU CONFERIDO]</td></tr>
+              <tr><td>2</td><td>[CRITÉRIO 2]</td><td>[JULGAMENTO OU CONFERIDO]</td></tr>
+              <tr><td>3</td><td>[CRITÉRIO 3]</td><td>[JULGAMENTO OU CONFERIDO]</td></tr>
+              <tr><td>4</td><td>[CRITÉRIO 4]</td><td>[JULGAMENTO OU CONFERIDO]</td></tr>
+              <tr><td>5</td><td>[CRITÉRIO 5]</td><td>[JULGAMENTO OU CONFERIDO]</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="micro">Critério que só existe em prosa não é critério, é intenção. Se ele puder virar contagem, vire — e se não puder, escreva "julgamento" na coluna em vez de fingir que se mede.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">✱</span><span class="tit">As peças</span></h2>
+
+        <div class="barra-filtros" id="barra-filtros">
+          <div class="filtro-linha"><span class="filtro-rot">Tipo</span><span id="filtro-tipo"></span></div>
+          <div class="filtro-linha"><span class="filtro-rot">Formato</span><span id="filtro-formato"></span></div>
+          <div class="filtro-linha"><span class="filtro-rot">Eixo</span><span id="filtro-eixo"></span></div>
+          <div class="filtro-resumo"><span id="contagem"></span><button class="limpar" id="limpar-filtros" type="button">limpar</button></div>
+        </div>
+
+        <div class="grade-pecas" id="grade-pecas"></div>
+        <p class="sem-resultado" id="sem-resultado" hidden>Nenhuma peça ainda. As peças entram no bloco 6 da entrevista, depois que a régua existir — peça escrita antes do critério é peça que vai ser refeita.</p>
+
+        <button class="btn-volta" id="btn-volta" type="button" hidden>← todas as peças</button>
+
+        <!-- As peças entram aqui como <article class="peca"> …
+             uma por peça, na mesma ordem da constante PECAS do script. -->
+      </section>
+    </div>
+
+    <!-- ========================== CALENDÁRIO =========================== -->
+    <div class="pagina" id="pg-calendario" data-titulo="Calendário">
+      <header class="pg-cabeca">
+        <p class="micro">Documento 6</p>
+        <h1>Calendário</h1>
+        <p class="desc">A ordem de publicação, a montagem antes dela, e o rastreador do que já saiu.</p>
+      </header>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">1</span><span class="tit">O que acontece com quem chega</span></h2>
+        <p>[O QUE ALGUÉM VÊ AO ABRIR O PERFIL PELA PRIMEIRA VEZ, E EM QUE ORDEM]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">2</span><span class="tit">Semana 0 · montagem</span></h2>
+        <p>[O QUE PRECISA ESTAR PRONTO ANTES DA PRIMEIRA PUBLICAÇÃO]</p>
+        <div class="semana" id="semana-zero"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">3</span><span class="tit">Cronograma de montagem</span></h2>
+        <p>[O QUE SE FAZ EM CADA DIA ANTES DA ESTREIA, CONTADO PARA TRÁS]</p>
+        <div class="prep" id="prep"></div>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">4</span><span class="tit">O rastreador</span></h2>
+        <p>Marque a data de estreia e o rastreador calcula em que semana o projeto está, o que sai hoje, o que vem a seguir e o que já foi publicado. Fica salvo neste navegador.</p>
+        <div class="campos">
+          <label class="campo" for="campo-estreia">Data de estreia
+            <input type="date" id="campo-estreia">
+          </label>
+          <button class="redefinir" id="redefinir-estreia" type="button">limpar</button>
+        </div>
+        <div class="rastreador" id="rastreador">
+          <p class="rastreador-vazio">Escolha a data de estreia para o rastreador começar.</p>
+        </div>
+        <p class="micro">A frequência está declarada no script desta página, em <code>OFFSETS</code> e <code>SEMANAS</code>: <span class="colchete">[QUAIS DIAS DA SEMANA]</span> e <span class="colchete">[QUANTAS SEMANAS]</span>. Trocar a frequência é trocar esses dois valores — e não a prosa daqui.</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">5</span><span class="tit">Por que essa ordem</span></h2>
+        <p>[POR QUE AS PEÇAS SAEM NESSA SEQUÊNCIA — O QUE A PRIMEIRA PRECISA ESTABELECER PARA A TERCEIRA FUNCIONAR]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">6</span><span class="tit">Stories e fixados</span></h2>
+        <p>[O QUE FICA FIXADO NO TOPO DO PERFIL, E O QUE OS STORIES FAZEM QUE O FEED NÃO FAZ]</p>
+      </section>
+
+      <section class="sec">
+        <h2 class="cab"><span class="n">7</span><span class="tit">Reconhecimento</span></h2>
+        <p>[COMO SE SABE QUE ESTÁ FUNCIONANDO — QUAL NÚMERO, E EM QUANTO TEMPO]</p>
+        <p class="micro">Data que vence sem desfecho registrado é o defeito que nenhum conferidor de qualidade pega. Registrar "não publicado, porque X" satisfaz igual: a conferência não tem opinião sobre o projeto estar em dia, tem opinião sobre o projeto saber onde está.</p>
+      </section>
+    </div>
+
+  </main>
+</div>
+
+
+<script>
+(function(){
+  "use strict";
+
+  /* Lido do <title> uma vez. Não escreva o nome da marca aqui: ele já está
+     no <title> e dois lugares com o mesmo dado divergem no primeiro ajuste. */
+  const TITULO_BASE = document.title;
+
+  const PAGINAS = ["inicio","estrategia","manual","materiais","elementos","producao","calendario"];
+  const PADRAO  = "inicio";
+
+  const menu       = document.getElementById("menu");
+  const subnav     = document.getElementById("subnav");
+  const subnavWrap = document.getElementById("subnavWrap");
+  const espinha    = document.getElementById("espinha");
+  const veu        = document.getElementById("veu");
+  const gavetaBtn  = document.getElementById("gavetaBtn");
+  const barraAtual = document.getElementById("barraAtual");
+
+  /* ganchos de inicialização por página — o sprint 3 registra o gerador aqui,
+     porque script que roda em página escondida mede tudo como zero */
+  const aoAbrir = Object.create(null);
+
+  /* A rota é "#pagina" ou "#pagina/sub". O sub existe para a Produção poder
+     abrir uma peça por link direto — sem isso, resultado de busca e botão
+     voltar do navegador não conseguem chegar numa peça fechada. */
+  function lerRota(){
+    const h = (location.hash || "").replace(/^#/, "");
+    const barra = h.indexOf("/");
+    const pg  = barra >= 0 ? h.slice(0, barra) : h;
+    const sub = barra >= 0 ? h.slice(barra + 1) : "";
+    return { pg: PAGINAS.indexOf(pg) >= 0 ? pg : PADRAO, sub };
+  }
+  function alvoValido(){ return lerRota().pg; }
+
+  const ouvintesRota = [];
+
+  /* roda cada gancho uma vez só, marcando a própria função.
+     não dá pra marcar a página: um gancho registrado depois que a página
+     já abriu ficaria pra sempre sem rodar. */
+  function rodarGanchos(pg){
+    (aoAbrir[pg] || []).forEach(fn => {
+      if (fn.__rodou) return;
+      fn.__rodou = true;
+      try { fn(); } catch(e){ console.error("[central] gancho de " + pg, e); }
+    });
+  }
+
+  /* Rolagem própria. scrollIntoView({behavior:"smooth"}) é silenciosamente
+     ignorado em vários ambientes — devolve rolagem zero e a navegação interna
+     inteira (subnav e resultados de busca) simplesmente não acontece.
+     Aqui a animação é nossa, então sempre funciona; e quem pediu menos
+     movimento recebe o salto direto. */
+  function rolarAte(el){
+    if (!el) return;
+    const destino = Math.max(0,
+      el.getBoundingClientRect().top + window.scrollY - 20);
+    const reduzir = window.matchMedia
+      && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduzir || !window.requestAnimationFrame){
+      window.scrollTo(0, destino);
+      return;
+    }
+    const inicio = window.scrollY;
+    const dist = destino - inicio;
+    if (Math.abs(dist) < 2) return;
+    const dur = Math.min(520, Math.max(200, Math.abs(dist) * 0.35));
+    let t0 = null, chegou = false;
+    const passo = t => {
+      if (t0 === null) t0 = t;
+      const p = Math.min(1, (t - t0) / dur);
+      const e = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2) / 2;
+      window.scrollTo(0, inicio + dist * e);
+      if (p < 1) requestAnimationFrame(passo); else chegou = true;
+    };
+    requestAnimationFrame(passo);
+
+    /* Garantia de chegada. requestAnimationFrame não dispara quadro nenhum em
+       aba de segundo plano, painel sem composição ou modo de economia — e aí
+       a animação nunca roda e o usuário não sai do lugar. O destino é o que
+       importa; a animação é enfeite. */
+    setTimeout(() => {
+      if (!chegou && Math.abs(window.scrollY - destino) > 4) {
+        window.scrollTo(0, destino);
+      }
+    }, dur + 140);
+  }
+
+  /* Estado local do projeto. Fica no navegador de quem usa — não há servidor
+     nem conta. Se o armazenamento estiver bloqueado (aba anônima, sandbox),
+     cai para memória: funciona na sessão e some ao fechar, em vez de quebrar. */
+  const CHAVE = "central:v1";
+  let memoria = null;
+  function lerEstado(){
+    if (memoria) return memoria;
+    try { return JSON.parse(localStorage.getItem(CHAVE) || "{}"); }
+    catch(e){ memoria = {}; return memoria; }
+  }
+  function gravarEstado(obj){
+    if (memoria){ memoria = obj; return; }
+    try { localStorage.setItem(CHAVE, JSON.stringify(obj)); }
+    catch(e){ memoria = obj; }
+  }
+
+  window.CENTRAL = {
+    rolarAte,
+    rota: lerRota,
+    estado: {
+      obter(chave, padrao){ const o = lerEstado(); return chave in o ? o[chave] : padrao; },
+      definir(chave, valor){ const o = lerEstado(); o[chave] = valor; gravarEstado(o); },
+      persistente(){ return memoria === null; },
+    },
+    /* a Produção troca o que está visível depois que o roteador já montou o
+       índice; precisa poder mandar remontar com o estado novo */
+    remontarSubnav(){ montarSubnav(lerRota().pg); },
+    /* chamado a cada navegação, inclusive quando só o sub muda */
+    aoNavegar(fn){ ouvintesRota.push(fn); },
+    registrar(pagina, fn){
+      (aoAbrir[pagina] = aoAbrir[pagina] || []).push(fn);
+      /* registro tardio: se a página já está aberta, roda agora.
+         acontece quando o site carrega direto em #elementos. */
+      if (alvoValido() === pagina) rodarGanchos(pagina);
+    },
+  };
+
+  let observador = null;
+
+  /* Um único lugar atribui id de seção, para todas as páginas, no arranque.
+     Antes cada consumidor atribuía o seu (subnav usava -s, busca usava -b) e o
+     esquema mudava conforme a página de entrada. Funcionava, mas qualquer
+     recurso novo que dependa de âncora herdaria a ambiguidade. */
+  function atribuirIds(){
+    PAGINAS.forEach(pg => {
+      const pagina = document.getElementById("pg-" + pg);
+      if (!pagina) return;
+      pagina.querySelectorAll("h2.cab, h2.peca-titulo").forEach((h2, i) => {
+        if (!h2.id) h2.id = pg + "-s" + i;
+      });
+    });
+  }
+
+  function montarSubnav(pg){
+    const pagina = document.getElementById("pg-" + pg);
+    /* Só entra no índice o que está visível. Um link para elemento oculto não
+       rola pra lugar nenhum, e daria um índice cheio de itens mortos.
+       getClientRects() vazio pega os dois jeitos de esconder que o site usa:
+       o atributo hidden das peças e o display:none das seções .so-grade. */
+    const titulos = pagina
+      ? [...pagina.querySelectorAll("h2.cab, h2.peca-titulo")]
+          .filter(h => h.getClientRects().length > 0)
+      : [];
+    subnav.innerHTML = "";
+    if (observador){ observador.disconnect(); observador = null; }
+
+    if (!titulos.length){ subnavWrap.hidden = true; return; }
+    subnavWrap.hidden = false;
+
+    const links = new Map();
+    titulos.forEach((h2, i) => {
+      if (!h2.id) h2.id = pg + "-s" + i;
+      const rotulo = h2.querySelector(".tit, .nome");
+      const li = document.createElement("li");
+      const a  = document.createElement("a");
+      a.href = "#" + pg;
+      a.textContent = rotulo ? rotulo.textContent.trim() : ("Seção " + (i+1));
+      a.addEventListener("click", ev => {
+        ev.preventDefault();
+        fecharGaveta();
+        rolarAte(h2);
+      });
+      li.appendChild(a); subnav.appendChild(li);
+      links.set(h2.id, a);
+    });
+
+    if (!("IntersectionObserver" in window)) return;
+    observador = new IntersectionObserver(entradas => {
+      entradas.forEach(e => {
+        const a = links.get(e.target.id);
+        if (!a) return;
+        if (e.isIntersecting){
+          subnav.querySelectorAll("a.ativo").forEach(x => x.classList.remove("ativo"));
+          a.classList.add("ativo");
+        }
+      });
+    }, { rootMargin: "-10% 0px -75% 0px", threshold: 0 });
+    titulos.forEach(h2 => observador.observe(h2));
+  }
+
+  function ir(){
+    const pg = alvoValido();
+
+    PAGINAS.forEach(p => {
+      const el = document.getElementById("pg-" + p);
+      if (el) el.hidden = (p !== pg);
+    });
+
+    menu.querySelectorAll("a").forEach(a => {
+      if (a.dataset.pg === pg) a.setAttribute("aria-current","page");
+      else a.removeAttribute("aria-current");
+    });
+
+    const pagina = document.getElementById("pg-" + pg);
+    const titulo = pagina ? (pagina.dataset.titulo || pg) : pg;
+    barraAtual.textContent = titulo;
+    document.title = TITULO_BASE + " — " + titulo;
+
+    montarSubnav(pg);
+    window.scrollTo(0, 0);
+    fecharGaveta();
+
+    rodarGanchos(pg);
+
+    const rota = lerRota();
+    ouvintesRota.forEach(fn => {
+      try { fn(rota); } catch(e){ console.error("[central] ouvinte de rota", e); }
+    });
+  }
+
+  /* Gerenciamento de foco da gaveta.
+     Aberta, ela é um diálogo modal: o foco entra, o Tab circula dentro dela e
+     ao fechar volta para o botão que a abriu. Sem isso, quem navega por teclado
+     abre a gaveta e continua tabulando no conteúdo atrás dela, às cegas.
+     Os papéis de diálogo só existem no modo gaveta — no desktop a mesma barra
+     é navegação comum e anunciá-la como modal seria mentira. */
+  const fecharBtn = () => document.getElementById("fecharGaveta");
+  function focaveisDaGaveta(){
+    return [...espinha.querySelectorAll('a[href], button:not([disabled]), input')]
+      .filter(e => e.getClientRects().length);
+  }
+  function abrirGaveta(){
+    espinha.dataset.aberta = "true";
+    espinha.setAttribute("role","dialog");
+    espinha.setAttribute("aria-modal","true");
+    espinha.setAttribute("aria-label","Navegação");
+    veu.hidden = false;
+    gavetaBtn.setAttribute("aria-expanded","true");
+    const alvo = fecharBtn();
+    if (alvo) alvo.focus();
+  }
+  function fecharGaveta(){
+    const estavaAberta = espinha.hasAttribute("data-aberta");
+    delete espinha.dataset.aberta;
+    espinha.removeAttribute("role");
+    espinha.removeAttribute("aria-modal");
+    espinha.removeAttribute("aria-label");
+    veu.hidden = true;
+    gavetaBtn.setAttribute("aria-expanded","false");
+    if (estavaAberta && espinha.contains(document.activeElement)) gavetaBtn.focus();
+  }
+
+  /* prende o Tab dentro da gaveta enquanto ela estiver aberta */
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Tab" || !espinha.hasAttribute("data-aberta")) return;
+    const itens = focaveisDaGaveta();
+    if (!itens.length) return;
+    const primeiro = itens[0], ultimo = itens[itens.length - 1];
+    if (e.shiftKey && document.activeElement === primeiro){ e.preventDefault(); ultimo.focus(); }
+    else if (!e.shiftKey && document.activeElement === ultimo){ e.preventDefault(); primeiro.focus(); }
+    else if (!espinha.contains(document.activeElement)){ e.preventDefault(); primeiro.focus(); }
+  });
+  gavetaBtn.addEventListener("click", () => {
+    if (espinha.dataset.aberta) fecharGaveta(); else abrirGaveta();
+  });
+  veu.addEventListener("click", fecharGaveta);
+  document.getElementById("fecharGaveta").addEventListener("click", fecharGaveta);
+  document.addEventListener("keydown", e => { if (e.key === "Escape") fecharGaveta(); });
+
+  /* tema: automático → claro → escuro */
+  const temaBtn = document.getElementById("temaBtn");
+  const CICLO = ["auto","light","dark"];
+  const NOME  = { auto:"automático", light:"claro", dark:"escuro" };
+  let tema = "auto";
+  function aplicarTema(){
+    if (tema === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", tema);
+    temaBtn.textContent = "Tema: " + NOME[tema];
+  }
+  temaBtn.addEventListener("click", () => {
+    tema = CICLO[(CICLO.indexOf(tema) + 1) % CICLO.length];
+    aplicarTema();
+  });
+  aplicarTema();
+
+  window.addEventListener("hashchange", ir);
+  atribuirIds();
+  ir();
+})();
+</script>
+
+<script>
+/* =========================================================================
+   BUSCA — índice em memória, montado uma vez a partir do HTML estático.
+   Usa textContent e nunca innerText: página escondida (display:none) devolve
+   innerText vazio, e todas menos uma estão escondidas o tempo todo.
+   ========================================================================= */
+(function(){
+  "use strict";
+
+  const PAGINAS = ["inicio","estrategia","manual","materiais","elementos","producao","calendario"];
+  const MAX = 12;
+
+  const campo   = document.getElementById("busca");
+  const info    = document.getElementById("buscaInfo");
+  const lista   = document.getElementById("resultados");
+  const wrap    = document.getElementById("resultadosWrap");
+  const vazio   = document.getElementById("buscaVazio");
+  const navDocs = document.getElementById("navDocs");
+  const subWrap = document.getElementById("subnavWrap");
+
+  const semAcento = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  const limpar    = s => s.replace(/\s+/g, " ").trim();
+  const escapar   = s => s.replace(/[&<>"]/g, c =>
+    ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]));
+
+  const indice = [];
+
+  function indexar(){
+    PAGINAS.forEach(pg => {
+      const pagina = document.getElementById("pg-" + pg);
+      if (!pagina) return;
+      const titulo = pagina.dataset.titulo || pg;
+
+      const cabeca = pagina.querySelector(".pg-cabeca, .capa");
+      if (cabeca) indice.push({ pg, titulo, ancora:"", rotulo:"Abertura",
+                                texto: limpar(cabeca.textContent) });
+
+      pagina.querySelectorAll("section.sec, article.peca").forEach((bloco, i) => {
+        const h = bloco.querySelector("h2");
+        if (h && !h.id) h.id = pg + "-b" + i;
+        const alvo = h ? (h.querySelector(".tit, .nome") || h) : null;
+        indice.push({
+          pg, titulo,
+          ancora: h ? h.id : "",
+          rotulo: alvo ? limpar(alvo.textContent) : "Seção " + (i + 1),
+          texto: limpar(bloco.textContent)
+        });
+      });
+    });
+    indice.forEach(e => { e.busca = semAcento(e.texto + " " + e.rotulo); });
+  }
+
+  function trecho(texto, termo){
+    const alvo = semAcento(texto);
+    const i = alvo.indexOf(termo);
+    if (i < 0) return escapar(texto.slice(0, 110)) + "…";
+    const ini = Math.max(0, i - 45);
+    const fim = Math.min(texto.length, i + termo.length + 65);
+    const bruto = (ini > 0 ? "…" : "") + texto.slice(ini, fim) + (fim < texto.length ? "…" : "");
+    /* marca no texto original usando as posições do texto normalizado —
+       normalizar não muda o número de caracteres aqui, só remove acentos */
+    const deslocado = i - ini + (ini > 0 ? 1 : 0);
+    return escapar(bruto.slice(0, deslocado))
+         + "<mark>" + escapar(bruto.substr(deslocado, termo.length)) + "</mark>"
+         + escapar(bruto.slice(deslocado + termo.length));
+  }
+
+  function buscar(q){
+    const termos = semAcento(q).split(/\s+/).filter(t => t.length > 1);
+    if (!termos.length) return null;
+    return indice
+      .map(e => {
+        if (!termos.every(t => e.busca.indexOf(t) >= 0)) return null;
+        /* pontua: acerto no título do bloco vale mais que no corpo */
+        const noRotulo = termos.filter(t => semAcento(e.rotulo).indexOf(t) >= 0).length;
+        return { e, peso: noRotulo * 10 + termos.length };
+      })
+      .filter(Boolean)
+      .sort((a, b) => b.peso - a.peso)
+      .slice(0, MAX)
+      .map(x => ({ ...x.e, termo: termos[0] }));
+  }
+
+  function irPara(pg, ancora){
+    const destino = "#" + pg;
+    const mudou = destino !== location.hash;
+    location.hash = destino;
+
+    const rolar = () => {
+      const alvo = ancora && document.getElementById(ancora);
+      if (!alvo) return;
+
+      /* Se o alvo mora dentro de uma peça de produção, ela pode estar fechada.
+         Abrir pela rota em vez de rolar às cegas — rolar para elemento oculto
+         não vai a lugar nenhum. */
+      const peca = alvo.closest("[data-peca]");
+      if (peca && alvo.closest("[hidden]")){
+        location.hash = "#" + pg + "/" + peca.dataset.peca;
+        setTimeout(() => window.CENTRAL.rolarAte(document.getElementById(ancora)), 80);
+        return;
+      }
+      window.CENTRAL.rolarAte(alvo);
+    };
+
+    /* o roteador zera a rolagem ao trocar de página — só rola depois disso.
+       se o hash não mudou, hashchange não dispara e vamos direto. */
+    if (mudou) setTimeout(rolar, 60); else rolar();
+  }
+
+  function render(res){
+    lista.innerHTML = "";
+    if (res === null){
+      wrap.hidden = true; info.hidden = true;
+      navDocs.hidden = false;
+      subWrap.hidden = !subWrap.dataset.tinhaItens;
+      return;
+    }
+    navDocs.hidden = true;
+    subWrap.hidden = true;
+    wrap.hidden = false;
+    info.hidden = false;
+    info.textContent = res.length ? res.length + (res.length === MAX ? "+ trechos" : " trechos") : "";
+    vazio.hidden = res.length > 0;
+
+    res.forEach(r => {
+      const li = document.createElement("li");
+      const a  = document.createElement("a");
+      a.href = "#" + r.pg;
+      a.innerHTML = '<span class="onde">' + escapar(r.titulo) + '</span>'
+                  + '<span class="oque">' + escapar(r.rotulo) + '</span>'
+                  + '<span class="trecho">' + trecho(r.texto, r.termo) + '</span>';
+      a.addEventListener("click", ev => { ev.preventDefault(); irPara(r.pg, r.ancora); });
+      li.appendChild(a);
+      lista.appendChild(li);
+    });
+  }
+
+  let debounce;
+  campo.addEventListener("input", () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      const q = campo.value.trim();
+      render(q.length < 2 ? null : buscar(q));
+    }, 120);
+  });
+
+  campo.addEventListener("keydown", e => {
+    if (e.key === "Escape"){ campo.value = ""; render(null); campo.blur(); }
+    if (e.key === "Enter"){
+      const primeiro = lista.querySelector("a");
+      if (primeiro) primeiro.click();
+    }
+  });
+
+  /* lembra se a subnav tinha conteúdo, pra restaurar ao limpar a busca */
+  new MutationObserver(() => {
+    const sub = document.getElementById("subnav");
+    if (sub.children.length) subWrap.dataset.tinhaItens = "1";
+    else delete subWrap.dataset.tinhaItens;
+  }).observe(document.getElementById("subnav"), { childList: true });
+
+  indexar();
+  window.CENTRAL.busca = { indice, buscar };   /* exposto pra verificação */
+})();
+</script>
+
+<script>
+/* =========================================================================
+   PRODUÇÃO — grade, filtro e detalhe.
+   As 14 peças continuam inteiras no HTML; o que muda é o que fica visível.
+   Rota "#producao" mostra a grade, "#producao/7" abre a peça 7 — assim
+   resultado de busca e botão voltar do navegador funcionam de verdade.
+   ========================================================================= */
+(function(){
+  "use strict";
+
+  /* A ficha de cada peça vive aqui, não no HTML, para a grade não depender de
+     raspar texto renderizado. O init confere contra o DOM e reclama se derivar. */
+  const PECAS = [
+    /* Uma linha por peça. A grade, os filtros e a contagem saem daqui.
+       Ao acrescentar uma peça, ela entra NESTA lista e como
+       <article class="peca"> na página — o init compara os dois e
+       reclama no console se divergirem. Duas fontes para um dado só
+       divergem no primeiro ajuste; o conferidor existe por isso.
+
+       { n:0, nome:"[NOME DA PEÇA]", formato:"[FORMATO]", eixo:1,
+         tipo:"carrossel" | "post" | "reels",
+         fundos:["tinta"], alvo:"[O QUE ELA PRECISA PRODUZIR]" },        */
+  ];
+
+  const EIXOS = {
+    /* Os eixos temáticos do mapa (Manual §9). 1:"[NOME DO EIXO 1]", … */
+  };
+  /* Os fundos possíveis de uma peça, para a tarja de cor do cartão.
+     As chaves têm que bater com o que aparece em PECAS[].fundos. */
+  const CORES = { tinta:"var(--tinta)", papel:"var(--papel)",
+                  marcador:"var(--marcador)", carimbo:"var(--carimbo)" };
+
+  const filtros = { tipo:"", formato:"", eixo:"" };
+  let artigos = [];
+
+  const pagina  = document.getElementById("pg-producao");
+  const grade   = document.getElementById("grade-pecas");
+  const vazio   = document.getElementById("sem-resultado");
+  const contagem= document.getElementById("contagem");
+  const limpar  = document.getElementById("limpar-filtros");
+
+  const escapar = s => String(s).replace(/[&<>"]/g, c =>
+    ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+
+  function montarGrade(){
+    grade.innerHTML = "";
+    PECAS.forEach(p => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "cartao";
+      b.dataset.n = p.n;
+      b.dataset.tipo = p.tipo;
+      b.dataset.formato = p.formato;
+      b.dataset.eixo = p.eixo === null ? "" : p.eixo;
+      const rotuloEixo = p.eixo === null ? "—" : p.eixo + " · " + EIXOS[p.eixo];
+      const tipoRot = p.tipo === "post" ? "Post único" : p.tipo === "reels" ? "Reels" : "Carrossel";
+      b.innerHTML =
+        '<span class="cartao-topo">' +
+          '<span class="cartao-n">' + p.n + '</span>' +
+          '<span class="cartao-nome">' + escapar(p.nome) + '</span>' +
+        '</span>' +
+        '<span class="cartao-meta">' +
+          '<b>' + escapar(p.formato) + '</b> · ' + tipoRot + '<br>' +
+          'Eixo ' + escapar(rotuloEixo) + '<br>' +
+          escapar(p.alvo) +
+        '</span>' +
+        '<span class="cartao-fundo" aria-hidden="true">' +
+          p.fundos.map(f => '<span style="background:' + CORES[f] + '"></span>').join("") +
+        '</span>';
+      b.addEventListener("click", () => { location.hash = "#producao/" + p.n; });
+      grade.appendChild(b);
+    });
+  }
+
+  function montarFiltros(){
+    const grupos = {
+      tipo:    [["","Tudo"],["carrossel","Carrossel"],["post","Post único"],["reels","Reels"]],
+      formato: [["","Tudo"]].concat([...new Set(PECAS.map(p => p.formato))].map(f => [f,f])),
+      eixo:    [["","Tudo"]].concat([...new Set(PECAS.map(p => p.eixo).filter(e => e !== null))]
+                 .sort((a,b)=>a-b).map(e => [String(e), e + " · " + EIXOS[e]])),
+    };
+    for (const [chave, opcoes] of Object.entries(grupos)){
+      const caixa = document.getElementById("filtro-" + chave);
+      opcoes.forEach(([valor, rot]) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "filtro-btn";
+        b.textContent = rot;
+        b.dataset.valor = valor;          /* usado pelos atalhos da home */
+        b.setAttribute("aria-pressed", String(filtros[chave] === valor));
+        b.addEventListener("click", () => {
+          filtros[chave] = valor;
+          [...caixa.children].forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+          aplicar();
+        });
+        caixa.appendChild(b);
+      });
+    }
+  }
+
+  function aplicar(){
+    let visiveis = 0;
+    [...grade.children].forEach(c => {
+      const ok = (!filtros.tipo    || c.dataset.tipo === filtros.tipo)
+              && (!filtros.formato || c.dataset.formato === filtros.formato)
+              && (!filtros.eixo    || c.dataset.eixo === filtros.eixo);
+      c.hidden = !ok;
+      if (ok) visiveis++;
+    });
+    contagem.textContent = visiveis === 1 ? "1 peça" : visiveis + " peças";
+    vazio.hidden = visiveis > 0;
+    limpar.hidden = !(filtros.tipo || filtros.formato || filtros.eixo);
+  }
+
+  function zerarFiltros(){
+    Object.keys(filtros).forEach(k => filtros[k] = "");
+    ["tipo","formato","eixo"].forEach(k => {
+      const caixa = document.getElementById("filtro-" + k);
+      [...caixa.children].forEach((x,i) => x.setAttribute("aria-pressed", String(i === 0)));
+    });
+    aplicar();
+  }
+
+  const anterior = document.getElementById("peca-anterior");
+  const proxima  = document.getElementById("peca-proxima");
+
+  /* O sub da rota aceita duas formas: "7" abre a peça 7, e "tipo=reels"
+     (ou eixo=/formato=) chega na grade já filtrada. A segunda existe para os
+     atalhos da home poderem apontar direto para um recorte. */
+  function aplicarSubFiltro(sub){
+    const igual = sub.indexOf("=");
+    if (igual < 0) return false;
+    const chave = sub.slice(0, igual);
+    if (!(chave in filtros)) return false;
+    const valor = decodeURIComponent(sub.slice(igual + 1));
+    const caixa = document.getElementById("filtro-" + chave);
+    const alvo = [...caixa.children].find(b => b.dataset.valor === valor);
+    if (!alvo) return false;
+    Object.keys(filtros).forEach(k => { if (k !== chave) filtros[k] = ""; });
+    filtros[chave] = valor;
+    ["tipo","formato","eixo"].forEach(k => {
+      const c = document.getElementById("filtro-" + k);
+      [...c.children].forEach(x => x.setAttribute("aria-pressed",
+        String(x.dataset.valor === filtros[k])));
+    });
+    aplicar();
+    return true;
+  }
+
+  function mostrar(rota){
+    if (rota.pg !== "producao") return;
+
+    if (rota.sub && aplicarSubFiltro(rota.sub)){
+      artigos.forEach(a => { a.hidden = true; });
+      pagina.dataset.vista = "grade";
+      window.CENTRAL.remontarSubnav && window.CENTRAL.remontarSubnav();
+      return;
+    }
+
+    const n = rota.sub === "" ? null : parseInt(rota.sub, 10);
+    const valido = n !== null && !isNaN(n) && n >= 0 && n < artigos.length;
+
+    artigos.forEach((a, i) => { a.hidden = !(valido && i === n); });
+    pagina.dataset.vista = valido ? "detalhe" : "grade";
+
+    if (valido){
+      anterior.disabled = n === 0;
+      proxima.disabled  = n === artigos.length - 1;
+      anterior.onclick = () => { if (n > 0) location.hash = "#producao/" + (n - 1); };
+      proxima.onclick  = () => { if (n < artigos.length - 1) location.hash = "#producao/" + (n + 1); };
+    }
+    /* a subnav é remontada pelo roteador antes daqui; refaz com o que ficou
+       visível agora, senão o índice lateral fica descrito pelo estado anterior */
+    window.CENTRAL.remontarSubnav && window.CENTRAL.remontarSubnav();
+  }
+
+  function iniciar(){
+    artigos = [...pagina.querySelectorAll("article.peca")];
+
+    /* confere se a ficha em JS bate com o que está escrito no HTML */
+    if (artigos.length !== PECAS.length){
+      console.error("[central] produção: " + artigos.length + " artigos no HTML para " +
+                    PECAS.length + " fichas em JS");
+    }
+    artigos.forEach((a, i) => {
+      a.dataset.peca = i;
+      const nomeDOM = (a.querySelector(".peca-titulo .nome") || {}).textContent || "";
+      if (PECAS[i] && nomeDOM.trim() !== PECAS[i].nome){
+        console.error('[central] produção: peça ' + i + ' diverge — HTML "' +
+                      nomeDOM.trim() + '" vs ficha "' + PECAS[i].nome + '"');
+      }
+    });
+
+    montarGrade();
+    montarFiltros();
+    aplicar();
+    limpar.addEventListener("click", zerarFiltros);
+    document.getElementById("btn-volta").addEventListener("click", () => {
+      location.hash = "#producao";
+    });
+    mostrar(window.CENTRAL.rota());
+  }
+
+  window.CENTRAL.registrar("producao", iniciar);
+  window.CENTRAL.aoNavegar(rota => { if (artigos.length) mostrar(rota); });
+  window.CENTRAL.producao = { PECAS, filtros };   /* para verificação */
+})();
+</script>
+
+<script>
+/* =========================================================================
+   COLCHETES — o contador do que ainda não foi respondido.
+
+   Substitui o painel de tarefas da central de origem, e pelo mesmo motivo
+   que ele existia: contagem escrita à mão em prosa diverge no primeiro
+   ajuste. Lá o número da frase de abertura ficou errado no dia em que uma
+   sexta tarefa entrou. Aqui não há número escrito — ele é lido da página.
+
+   A CONVENÇÃO: um slot por preencher é [TEXTO EM MAIÚSCULAS]. Começa por
+   letra maiúscula ou dígito, não atravessa linha. Isso é grep-ável de fora
+   (um conferidor em node acha o mesmo conjunto) e visível de dentro.
+
+   O que ele NÃO faz: julgar se o que foi escrito presta. Colchete fechado
+   com resposta errada some da conta igual. A conferência de conteúdo é a
+   régua editorial; esta é a conferência de existência.
+   ========================================================================= */
+(function(){
+  "use strict";
+
+  const PADRAO = /\[[A-ZÀ-ÖØ-Þ0-9][^\]\n]*\]/g;
+  const PULAR  = { SCRIPT:1, STYLE:1, CODE:1, TEXTAREA:1 };
+
+  const palco = document.getElementById("conteudo");
+  const caixa = document.getElementById("agora");
+  const barra = document.getElementById("progresso");
+  const texto = document.getElementById("progresso-txt");
+
+  /* Envolve cada ocorrência num <span class="colchete">. Trabalha sobre nós
+     de texto, então atributo nenhum é tocado — e textContent não muda, o que
+     mantém o índice de busca idêntico ao que ele seria sem isto. */
+  function marcar(raiz){
+    const alvo = [];
+    const w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT, {
+      acceptNode(n){
+        if (!n.nodeValue || n.nodeValue.indexOf("[") < 0) return NodeFilter.FILTER_REJECT;
+        for (let p = n.parentNode; p && p !== raiz; p = p.parentNode){
+          if (PULAR[p.nodeName]) return NodeFilter.FILTER_REJECT;
+          if (p.classList && p.classList.contains("colchete")) return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    for (let n = w.nextNode(); n; n = w.nextNode()) alvo.push(n);
+
+    alvo.forEach(no => {
+      PADRAO.lastIndex = 0;
+      if (!PADRAO.test(no.nodeValue)) return;
+      PADRAO.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let fim = 0, m;
+      while ((m = PADRAO.exec(no.nodeValue)) !== null){
+        if (m.index > fim) frag.appendChild(document.createTextNode(no.nodeValue.slice(fim, m.index)));
+        const s = document.createElement("span");
+        s.className = "colchete";
+        s.textContent = m[0];
+        frag.appendChild(s);
+        fim = m.index + m[0].length;
+      }
+      if (fim < no.nodeValue.length) frag.appendChild(document.createTextNode(no.nodeValue.slice(fim)));
+      no.parentNode.replaceChild(frag, no);
+    });
+  }
+
+  /* Conta DEPOIS de marcar: o que conta é o span, não a regex de novo.
+     Assim o número na tela e o realce na página não podem discordar. */
+  function contar(){
+    const paginas = [...palco.querySelectorAll(".pagina")];
+    return paginas.map(p => ({
+      id: p.id.replace(/^pg-/, ""),
+      titulo: p.dataset.titulo || p.id,
+      abertos: p.querySelectorAll(".colchete").length,
+    }));
+  }
+
+  function montar(){
+    marcar(palco);
+    const linhas = contar();
+    const total  = linhas.reduce((s, l) => s + l.abertos, 0);
+
+    caixa.innerHTML = "";
+    linhas.forEach(l => {
+      const item = document.createElement("div");
+      item.className = "tarefa-item";
+      item.dataset.feito = l.abertos === 0 ? "1" : "0";
+      const n = document.createElement("b");
+      n.style.cssText = "font-family:var(--display);font-size:1.1rem;line-height:1;min-width:2.2ch;text-align:right;color:" +
+                        (l.abertos === 0 ? "var(--miudo)" : "var(--acento)");
+      n.textContent = l.abertos;
+      const txt = document.createElement("span");
+      txt.className = "tarefa-txt";
+      const tit = document.createElement("b");
+      tit.textContent = l.titulo;
+      const nota = document.createElement("span");
+      nota.textContent = l.abertos === 0
+        ? "sem colchete aberto"
+        : l.abertos + (l.abertos === 1 ? " slot esperando resposta" : " slots esperando resposta");
+      txt.appendChild(tit); txt.appendChild(nota);
+      item.appendChild(n); item.appendChild(txt);
+      item.addEventListener("click", () => { location.hash = "#" + l.id; });
+      item.style.cursor = "pointer";
+      caixa.appendChild(item);
+    });
+
+    /* IRMÃO de .agora, não filho — e isto foi um defeito medido, não uma
+       preferência. A .agora é uma lista com gap de 1px sobre fundo --linha:
+       o divisor entre as linhas É o fundo do container, e cada linha tapa
+       sua parte com --ground. Um filho sem fundo próprio fica com o divisor
+       atrás, e o texto --miudo em cima dele deu 2,83:1 no claro e 2,58:1 no
+       escuro — reprovado nos dois. A regra .agora-pe já tinha margin-top,
+       que é o sinal de que ela nasceu para ficar de fora. */
+    const anterior = document.getElementById("agora-pe");
+    if (anterior) anterior.remove();
+    const pe = document.createElement("div");
+    pe.className = "agora-pe";
+    pe.id = "agora-pe";
+    pe.innerHTML = '<span>Contado nesta página, agora — não guardado de antes.</span>' +
+                   '<span><b>' + total + '</b> no total</span>';
+    caixa.parentNode.insertBefore(pe, caixa.nextSibling);
+
+    /* A barra mede páginas fechadas, não colchetes fechados: as páginas são
+       o que a entrevista entrega por bloco, e uma página com um colchete
+       aberto não está entregue. Percentual de colchete andaria rápido no
+       começo e travaria no fim, que é o oposto de informar. */
+    const prontas = linhas.filter(l => l.abertos === 0).length;
+    barra.style.width = Math.round(100 * prontas / linhas.length) + "%";
+    texto.textContent = total === 0
+      ? "nenhum colchete aberto — a central está preenchida"
+      : prontas + " de " + linhas.length + " páginas fechadas · " + total + " colchetes abertos";
+
+    window.CENTRAL.colchetes = { total, porPagina: linhas };
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", montar);
+  else montar();
+})();
+</script>
+
+
+<script>
+/* =========================================================================
+   CALENDÁRIO — rastreador de publicação.
+
+   Difere do original de propósito, e a diferença é uma correção. Lá os dias
+   eram elementos div.dia escritos à mão no HTML e a ficha das peças vivia
+   no JavaScript: duas fontes para um dado só, que precisaram de um
+   conferidor dedicado para não divergirem. Aqui os dias são DERIVADOS de
+   PECAS. Uma peça a mais no array é um dia a mais no calendário, e não há
+   como discordarem.
+
+   O que continua igual, porque continua certo: data que vence sem desfecho
+   registrado é o defeito que nenhuma conferência de qualidade pega. O
+   rastreador não reprova por atraso — reprova por silêncio.
+   ========================================================================= */
+(function(){
+  "use strict";
+
+  const DIA_MS = 86400000;
+
+  /* Deslocamento de cada publicação dentro da semana, a partir da estreia.
+     [0,2,4] = ter/qui/sáb se a estreia cair numa terça. Vazio enquanto o
+     bloco 6 da entrevista não fechar a frequência. */
+  const OFFSETS = [];      /* [QUAIS DIAS DA SEMANA] */
+  const SEMANAS = 0;       /* [QUANTAS SEMANAS] */
+
+  const caixa   = document.getElementById("rastreador");
+  const campo   = document.getElementById("campo-estreia");
+  const limpar  = document.getElementById("redefinir-estreia");
+  if (!caixa || !campo) return;
+
+  const sohDia = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const somar  = (d, n) => new Date(d.getTime() + n * DIA_MS);
+  const iso    = d => d.getFullYear() + "-" +
+                      String(d.getMonth()+1).padStart(2,"0") + "-" +
+                      String(d.getDate()).padStart(2,"0");
+  const deIso  = s => { const [a,m,d] = s.split("-").map(Number); return new Date(a, m-1, d); };
+  const curto  = d => d.toLocaleDateString("pt-BR", { day:"2-digit", month:"2-digit" });
+  const diaSem = d => d.toLocaleDateString("pt-BR", { weekday:"short" }).replace(".","");
+
+  const pecas = () => (window.CENTRAL.producao && window.CENTRAL.producao.PECAS) || [];
+  const cores = { tinta:"var(--tinta)", papel:"var(--papel)",
+                  marcador:"var(--marcador)", carimbo:"var(--carimbo)" };
+
+  /* índice i → data. Passa uma semana a cada OFFSETS.length publicações. */
+  function dataDe(estreia, i){
+    if (!OFFSETS.length) return null;
+    return somar(estreia, Math.floor(i / OFFSETS.length) * 7 + OFFSETS[i % OFFSETS.length]);
+  }
+
+  const estreiaSalva = () => {
+    const s = window.CENTRAL.estado.obter("estreia", "");
+    return s ? deIso(s) : null;
+  };
+  const publicado = i => window.CENTRAL.estado.obter("pub:" + i, false);
+
+  function vazio(motivo){
+    caixa.innerHTML = "";
+    const d = document.createElement("div");
+    d.className = "rastreador-vazio";
+    const p = document.createElement("p");
+    p.textContent = motivo;
+    d.appendChild(p);
+    caixa.appendChild(d);
+  }
+
+  function montar(){
+    const lista = pecas();
+
+    if (!lista.length || !OFFSETS.length || !SEMANAS){
+      vazio("O rastreador liga sozinho quando três coisas existirem: as peças na "
+          + "constante PECAS da página Produção, a frequência em OFFSETS e a "
+          + "quantidade de semanas em SEMANAS — as duas últimas no script desta "
+          + "página. É o bloco 6 da entrevista.");
+      return;
+    }
+
+    const estreia = estreiaSalva();
+    if (!estreia){
+      vazio("Escolha a data de estreia acima para o rastreador começar.");
+      return;
+    }
+
+    const hoje = sohDia(new Date());
+    caixa.innerHTML = "";
+
+    const ativo = document.createElement("div");
+    ativo.className = "rastreador-ativo";
+
+    /* os marcos: em que semana está, o que sai hoje, o que vem a seguir */
+    const total    = lista.length;
+    const feitos   = lista.filter((_, i) => publicado(i)).length;
+    const proximo  = lista.findIndex((_, i) => !publicado(i) &&
+                       dataDe(estreia, i) && dataDe(estreia, i) >= hoje);
+    const semanaAt = Math.min(SEMANAS,
+                       Math.floor((hoje - sohDia(estreia)) / (7 * DIA_MS)) + 1);
+
+    const marco = document.createElement("dl");
+    marco.className = "marco";
+    const cel = (rot, val, sub) => {
+      const d = document.createElement("div");
+      const dt = document.createElement("dt"); dt.textContent = rot;
+      const dd = document.createElement("dd"); dd.textContent = val;
+      if (sub){ const s = document.createElement("small"); s.textContent = sub; dd.appendChild(s); }
+      d.appendChild(dt); d.appendChild(dd); return d;
+    };
+    marco.appendChild(cel("Onde você está",
+      hoje < sohDia(estreia) ? "antes da estreia" : "semana " + semanaAt + " de " + SEMANAS,
+      "estreia em " + curto(estreia)));
+    marco.appendChild(cel("Publicado", feitos + " de " + total,
+      total - feitos + " restando"));
+    marco.appendChild(cel("Próxima",
+      proximo >= 0 ? lista[proximo].nome : "—",
+      proximo >= 0 ? curto(dataDe(estreia, proximo)) : "nada programado à frente"));
+    ativo.appendChild(marco);
+
+    /* as semanas, com um dia por peça */
+    for (let s = 0; s < SEMANAS; s++){
+      const doBloco = [];
+      for (let k = 0; k < OFFSETS.length; k++){
+        const i = s * OFFSETS.length + k;
+        if (i < lista.length) doBloco.push(i);
+      }
+      if (!doBloco.length) continue;
+
+      const bloco = document.createElement("div");
+      bloco.className = "semana";
+      const topo = document.createElement("div");
+      topo.className = "semana-topo";
+      const b = document.createElement("b"); b.textContent = "Semana " + (s + 1);
+      const em = document.createElement("em");
+      em.textContent = curto(dataDe(estreia, doBloco[0])) + " – " +
+                       curto(dataDe(estreia, doBloco[doBloco.length - 1]));
+      topo.appendChild(b); topo.appendChild(em);
+      bloco.appendChild(topo);
+
+      doBloco.forEach(i => {
+        const p = lista[i];
+        const data = dataDe(estreia, i);
+        const feito = publicado(i);
+        const ehHoje = data.getTime() === hoje.getTime();
+
+        const dia = document.createElement("div");
+        dia.className = "dia";
+        dia.dataset.publicado = feito ? "1" : "0";
+        dia.dataset.estado = feito ? "publicado" : ehHoje ? "hoje"
+                           : data < hoje ? "atrasado" : "futuro";
+
+        const quando = document.createElement("div");
+        quando.className = "quando";
+        quando.textContent = diaSem(data);
+        const dt = document.createElement("span");
+        dt.className = "data"; dt.textContent = curto(data);
+        quando.appendChild(dt);
+        if (ehHoje){
+          const selo = document.createElement("span");
+          selo.className = "selo-hoje"; selo.textContent = "hoje";
+          quando.appendChild(selo);
+        }
+
+        const sw = document.createElement("div");
+        sw.className = "swatch";
+        sw.style.background = cores[(p.fundos || [])[0]] || "var(--cinza)";
+
+        const oque = document.createElement("div");
+        oque.className = "oque";
+        const tit = document.createElement("div");
+        tit.className = "dia-tit"; tit.textContent = p.nome;
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.textContent = "Peça " + p.n + " · " + p.formato + " · " + p.tipo;
+        oque.appendChild(tit); oque.appendChild(meta);
+
+        const rot = document.createElement("label");
+        rot.className = "publicar";
+        const cx = document.createElement("input");
+        cx.type = "checkbox"; cx.checked = feito;
+        cx.addEventListener("change", () => {
+          window.CENTRAL.estado.definir("pub:" + i, cx.checked);
+          montar();
+        });
+        rot.appendChild(cx);
+        rot.appendChild(document.createTextNode(feito ? "publicado" : "marcar como publicado"));
+        oque.appendChild(rot);
+
+        dia.appendChild(quando); dia.appendChild(sw); dia.appendChild(oque);
+        bloco.appendChild(dia);
+      });
+
+      ativo.appendChild(bloco);
+    }
+
+    const pe = document.createElement("div");
+    pe.className = "rastreador-pe";
+    pe.innerHTML = "<span>salvo neste navegador</span>" +
+      (window.CENTRAL.estado.persistente() ? "" : "<span>armazenamento bloqueado — some ao fechar</span>");
+    ativo.appendChild(pe);
+
+    caixa.appendChild(ativo);
+  }
+
+  function iniciar(){
+    const salva = estreiaSalva();
+    if (salva) campo.value = iso(salva);
+    campo.addEventListener("change", () => {
+      if (campo.value) window.CENTRAL.estado.definir("estreia", campo.value);
+      montar();
+    });
+    if (limpar) limpar.addEventListener("click", () => {
+      window.CENTRAL.estado.definir("estreia", "");
+      campo.value = "";
+      montar();
+    });
+    montar();
+  }
+
+  window.CENTRAL.registrar("calendario", iniciar);
+})();
+</script>
+
