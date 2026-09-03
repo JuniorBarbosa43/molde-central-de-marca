@@ -23,7 +23,12 @@
 const fs = require("fs");
 const path = require("path");
 
-const ALVO = process.argv[2] || path.join(__dirname, "molde", "central.html");
+/* O caminho é o primeiro argumento que NÃO é bandeira. Tomar argv[2] cru
+   fazia `node conta-colchetes.js --lista` — que é o comando escrito no
+   protocolo — tentar abrir um arquivo chamado "--lista" e sair com 2. A
+   instrução estava certa e o script é que não a servia; conserto no script. */
+const ARGS = process.argv.slice(2).filter(a => !a.startsWith("--"));
+const ALVO = ARGS[0] || path.join(__dirname, "molde", "central.html");
 const PADRAO = /\[[A-ZÀ-ÖØ-Þ0-9][^\]\n]*\]/g;
 
 let bruto;
